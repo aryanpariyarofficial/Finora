@@ -4,17 +4,17 @@ export interface Plan {
   id: PlanId;
   points: number | null; // null = lifetime/unlimited
   days: number | null;
-  /** Price in NPR. TODO(aryan): set real prices here when decided. */
+  /** Price in NPR. */
   price: number | null;
   popular?: boolean;
 }
 
 /** 1 point = 1 day of premium access. */
 export const PLANS: Plan[] = [
-  { id: "monthly", points: 30, days: 30, price: null },
-  { id: "half_yearly", points: 180, days: 180, price: null, popular: true },
-  { id: "yearly", points: 365, days: 365, price: null },
-  { id: "lifetime", points: null, days: null, price: null },
+  { id: "monthly", points: 30, days: 30, price: 500 },
+  { id: "half_yearly", points: 180, days: 180, price: 2000, popular: true },
+  { id: "yearly", points: 365, days: 365, price: 3000 },
+  { id: "lifetime", points: null, days: null, price: 10000 },
 ];
 
 export const PLAN_POINTS: Record<Exclude<PlanId, "lifetime">, number> = {
