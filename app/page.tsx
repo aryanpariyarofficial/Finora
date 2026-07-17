@@ -697,10 +697,12 @@ export default function LandingPage() {
             <LogoMark className="size-6" />
             <span>Finora — Your Personal Financial Command Center</span>
           </div>
-          <nav className="flex items-center gap-5">
+          <nav className="flex flex-wrap items-center justify-center gap-5">
             <a href="#features" className="hover:text-foreground">Features</a>
             <a href="#pricing" className="hover:text-foreground">Pricing</a>
             <a href="#faq" className="hover:text-foreground">FAQ</a>
+            <Link href="/privacy" className="hover:text-foreground">Privacy</Link>
+            <Link href="/terms" className="hover:text-foreground">Terms</Link>
             <Link href="/login" className="hover:text-foreground">Log in</Link>
           </nav>
         </div>

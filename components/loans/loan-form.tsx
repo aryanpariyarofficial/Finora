@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { DateField } from "@/components/ui/date-field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -92,10 +93,9 @@ export function LoanForm({ accounts }: { accounts: AccountBalance[] }) {
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
               <Label htmlFor="start_date">{t.loans.startDate}</Label>
-              <Input
+              <DateField
                 id="start_date"
                 name="start_date"
-                type="date"
                 required
                 defaultValue={todayISO()}
               />

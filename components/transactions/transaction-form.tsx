@@ -20,6 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { DateField } from "@/components/ui/date-field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -130,10 +131,9 @@ export function TransactionForm({
             </div>
             <div className="space-y-2">
               <Label htmlFor="occurred_on">{t.tx.date}</Label>
-              <Input
+              <DateField
                 id="occurred_on"
                 name="occurred_on"
-                type="date"
                 required
                 defaultValue={transaction?.occurred_on ?? todayISO()}
               />

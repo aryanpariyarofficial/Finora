@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { DateField } from "@/components/ui/date-field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -123,17 +124,16 @@ export function InvestmentForm() {
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
               <Label htmlFor="invested_on">{t.invest.investedOn}</Label>
-              <Input
+              <DateField
                 id="invested_on"
                 name="invested_on"
-                type="date"
                 required
                 defaultValue={todayISO()}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="matures_on">{t.invest.maturesOn}</Label>
-              <Input id="matures_on" name="matures_on" type="date" />
+              <DateField id="matures_on" name="matures_on" optional />
             </div>
           </div>
           <Button type="submit" className="w-full" disabled={pending}>

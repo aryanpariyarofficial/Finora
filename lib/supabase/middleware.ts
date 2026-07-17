@@ -10,6 +10,8 @@ const PUBLIC_PATHS = [
   "/auth",
   "/setup",
   "/api/cron",
+  "/privacy",
+  "/terms",
 ];
 
 export async function updateSession(request: NextRequest) {

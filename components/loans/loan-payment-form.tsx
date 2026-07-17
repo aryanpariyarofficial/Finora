@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { DateField } from "@/components/ui/date-field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -83,10 +84,9 @@ export function LoanPaymentForm({
           </div>
           <div className="space-y-2">
             <Label htmlFor="paid_on">{t.loans.paidOn}</Label>
-            <Input
+            <DateField
               id="paid_on"
               name="paid_on"
-              type="date"
               required
               defaultValue={todayISO()}
             />
