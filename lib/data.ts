@@ -311,6 +311,31 @@ export async function getRecurring(): Promise<RecurringRow[]> {
   })) as unknown as RecurringRow[];
 }
 
+// ---------- Net worth ----------
+
+export interface NetWorthPoint {
+  label: string;
+  netWorth: number;
+}
+
+export async function getNetWorthTimeline(
+  months = 12,
+): Promise<NetWorthPoint[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("net_worth_timeline", {
+    p_months: months,
+  });
+  return (data ?? []).map(
+    (r: { month_end: string; net_worth: number }) => ({
+      label: new Date(`${r.month_end}T00:00:00`).toLocaleDateString("en-US", {
+        month: "short",
+        year: "2-digit",
+      }),
+      netWorth: Number(r.net_worth),
+    }),
+  );
+}
+
 // ---------- Reports ----------
 
 export interface ReportData {

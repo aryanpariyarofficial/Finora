@@ -390,6 +390,8 @@ export const en = {
     trend: "Monthly trend",
     noData: "No data for this period.",
     premiumNote: "Free plan shows the current month only. Upgrade for full history and export.",
+    netWorth: "Net worth",
+    netWorthDesc: "Assets minus liabilities, last 12 months",
   },
 };
 
@@ -786,6 +788,8 @@ export const ne: Dict = {
     noData: "यो अवधिको डाटा छैन।",
     premiumNote:
       "निःशुल्क योजनामा यो महिना मात्र देखिन्छ। पूरा इतिहास र एक्सपोर्टका लागि अपग्रेड गर्नुहोस्।",
+    netWorth: "खुद सम्पत्ति",
+    netWorthDesc: "सम्पत्ति घटाउ दायित्व, पछिल्लो १२ महिना",
   },
 };
 

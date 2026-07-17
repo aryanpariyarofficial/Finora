@@ -24,3 +24,8 @@ export const SavingsTrend = dynamic(
   () => import("../reports/savings-trend").then((m) => m.SavingsTrend),
   { ssr: false, loading: chartFallback },
 );
+
+export const NetWorthChart = dynamic(
+  () => import("../reports/networth-chart").then((m) => m.NetWorthChart),
+  { ssr: false, loading: chartFallback },
+);

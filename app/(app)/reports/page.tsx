@@ -3,6 +3,7 @@ import { ArrowDownLeft, ArrowUpRight, Hash, Lock, PiggyBank } from "lucide-react
 import {
   CashflowChart,
   CategoryDonut,
+  NetWorthChart,
   SavingsTrend,
 } from "@/components/dashboard/lazy-charts";
 import { StatCard } from "@/components/dashboard/stat-card";
@@ -14,7 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getReportData, type CategoryTotal } from "@/lib/data";
+import { getNetWorthTimeline, getReportData, type CategoryTotal } from "@/lib/data";
 import { getEntitlements } from "@/lib/entitlements";
 import { formatMoney, monthStart, todayISO } from "@/lib/finance";
 import { getDict } from "@/lib/i18n/server";
@@ -107,6 +108,7 @@ export default async function ReportsPage({
 
   const periodLabel = `${from} → ${to}`;
   const net = report.income - report.expense;
+  const netWorth = ent.isPremium ? await getNetWorthTimeline(12) : [];
 
   return (
     <>
@@ -164,6 +166,8 @@ export default async function ReportsPage({
           icon={Hash}
         />
       </div>
+
+      {netWorth.length > 1 && <NetWorthChart data={netWorth} />}
 
       {report.monthly.length > 1 && (
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
