@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 import { PlansSection } from "@/components/upgrade/plans";
+import { WhatsAppFab } from "@/components/upgrade/whatsapp-fab";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getEntitlements } from "@/lib/entitlements";
@@ -78,6 +79,11 @@ export default async function UpgradePage() {
           email: user.email ?? "",
           phone: profile?.phone ?? "",
         }}
+      />
+
+      <WhatsAppFab
+        name={profile?.full_name ?? user.email?.split("@")[0] ?? ""}
+        email={user.email ?? ""}
       />
 
       {requests && requests.length > 0 && (
