@@ -4,7 +4,13 @@ import Image from "next/image";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Check, Infinity as InfinityIcon, Sparkles } from "lucide-react";
+import {
+  Check,
+  Infinity as InfinityIcon,
+  MessageCircle,
+  PartyPopper,
+  Sparkles,
+} from "lucide-react";
 import { submitPaymentRequest } from "@/lib/actions/billing";
 import { PLANS, type PlanId } from "@/lib/billing";
 import { formatMoney } from "@/lib/finance";
@@ -213,6 +219,7 @@ function CheckoutDialog({
   const t = useT();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [submitted, setSubmitted] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<PlanId>("monthly");
   const [method, setMethod] = useState<WalletMethod>("esewa");
   const [bank, setBank] = useState<(typeof BANKS)[number]["id"]>("nepal_sbi");
@@ -222,6 +229,7 @@ function CheckoutDialog({
   if (plan && plan !== lastOpened) {
     setLastOpened(plan);
     setSelectedPlan(plan);
+    setSubmitted(false);
   }
 
   const planLabel: Record<PlanId, string> = {
@@ -250,28 +258,69 @@ function CheckoutDialog({
       if (result?.error) {
         toast.error(result.error);
       } else {
-        toast.success(t.upgrade.submitted);
-        onClose();
+        setSubmitted(true);
         router.refresh();
       }
     });
   }
 
-  return (
-    <Dialog open={plan !== null} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>
-            {t.upgrade.formTitle}
-            {activePlan?.price != null && (
-              <span className="ml-2 text-muted-foreground">
-                · {formatMoney(activePlan.price)}
-              </span>
-            )}
-          </DialogTitle>
-        </DialogHeader>
+  function closeAll() {
+    setSubmitted(false);
+    onClose();
+  }
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+  const waMessage =
+    `Hi! I just upgraded my Finora plan (${planLabel[selectedPlan]}).\n` +
+    `Name: ${defaults.name}\n` +
+    `Email: ${defaults.email}`;
+  const waHref = `https://wa.me/9779848988463?text=${encodeURIComponent(waMessage)}`;
+
+  return (
+    <Dialog open={plan !== null} onOpenChange={(open) => !open && closeAll()}>
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+        {submitted ? (
+          <div className="space-y-5 py-2 text-center">
+            <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-[var(--success)]/15">
+              <PartyPopper className="size-7 text-[var(--success)]" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-lg font-bold">{t.upgrade.successTitle}</h2>
+              <p className="text-sm text-muted-foreground">
+                {t.upgrade.successBody}
+              </p>
+            </div>
+            <div className="rounded-lg border border-[#25D366]/30 bg-[#25D366]/5 p-4 text-sm">
+              {t.upgrade.successFast}
+            </div>
+            <div className="flex flex-col gap-2">
+              <Button
+                asChild
+                className="w-full bg-[#25D366] text-white hover:bg-[#1eb85a]"
+              >
+                <a href={waHref} target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="size-4" />
+                  {t.upgrade.successWhatsApp}
+                </a>
+              </Button>
+              <Button variant="ghost" className="w-full" onClick={closeAll}>
+                {t.upgrade.successClose}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle>
+                {t.upgrade.formTitle}
+                {activePlan?.price != null && (
+                  <span className="ml-2 text-muted-foreground">
+                    · {formatMoney(activePlan.price)}
+                  </span>
+                )}
+              </DialogTitle>
+            </DialogHeader>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label>{t.upgrade.plan}</Label>
             <Select
@@ -397,10 +446,12 @@ function CheckoutDialog({
             />
           </div>
 
-          <Button type="submit" className="w-full" disabled={pending}>
-            {pending ? t.upgrade.submitting : t.upgrade.submit}
-          </Button>
-        </form>
+              <Button type="submit" className="w-full" disabled={pending}>
+                {pending ? t.upgrade.submitting : t.upgrade.submit}
+              </Button>
+            </form>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -155,6 +155,13 @@ export const en = {
     afterPay: "After paying, fill in your details and upload the screenshot.",
     valueBlurb:
       "One saved impulse purchase pays for the whole month. Finora users typically find leaks worth far more than the subscription.",
+    successTitle: "🎉 Payment submitted — thank you!",
+    successBody:
+      "Your upgrade request has been received. Our team verifies every payment manually and will activate your premium points shortly.",
+    successFast:
+      "Want it activated faster? Message us on WhatsApp with your payment — we usually respond within an hour.",
+    successWhatsApp: "Message us on WhatsApp",
+    successClose: "Done",
   },
   profile: {
     title: "Profile",
@@ -468,6 +475,13 @@ export const ne: Dict = {
     afterPay: "भुक्तानी गरेपछि विवरण भरेर स्क्रिनसट अपलोड गर्नुहोस्।",
     valueBlurb:
       "एउटा जोगिएको फजुल खर्चले नै पूरै महिनाको शुल्क उठ्छ। Finora प्रयोगकर्ताहरूले शुल्कभन्दा धेरै बढी बचत भेट्टाउँछन्।",
+    successTitle: "🎉 भुक्तानी पेश भयो — धन्यवाद!",
+    successBody:
+      "तपाईंको upgrade अनुरोध प्राप्त भयो। हाम्रो टोलीले हरेक भुक्तानी हातैले प्रमाणित गरी चाँडै तपाईंको premium points सक्रिय गर्नेछ।",
+    successFast:
+      "छिटो सक्रिय गर्न चाहनुहुन्छ? भुक्तानीसहित हामीलाई WhatsApp मा message गर्नुहोस् — सामान्यतया एक घण्टाभित्र जवाफ दिन्छौं।",
+    successWhatsApp: "WhatsApp मा message गर्नुहोस्",
+    successClose: "ठिक छ",
   },
   profile: {
     title: "प्रोफाइल",
