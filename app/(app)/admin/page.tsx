@@ -91,8 +91,11 @@ export default async function AdminPage() {
                       </Badge>
                     </p>
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      {r.email} · {r.phone} ·{" "}
-                      {new Date(r.created_at).toLocaleString()}
+                      {r.email} · {r.phone}
+                      {r.pay_method
+                        ? ` · via ${String(r.pay_method).replace(/_/g, " ")}`
+                        : ""}{" "}
+                      · {new Date(r.created_at).toLocaleString()}
                     </p>
                   </div>
                   <RequestActions

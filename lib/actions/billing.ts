@@ -10,6 +10,13 @@ const requestSchema = z.object({
   email: z.string().email("Valid email required"),
   phone: z.string().trim().min(7, "Valid phone number required").max(20),
   plan: z.enum(["monthly", "half_yearly", "yearly", "lifetime"]),
+  pay_method: z.enum([
+    "esewa",
+    "khalti",
+    "nepal_sbi",
+    "global_ime",
+    "laxmi_sunrise",
+  ]),
 });
 
 export type BillingFormState = { error?: string; success?: boolean } | null;
@@ -54,6 +61,7 @@ export async function submitPaymentRequest(
     email: parsed.data.email,
     phone: parsed.data.phone,
     plan: parsed.data.plan,
+    pay_method: parsed.data.pay_method,
     screenshot_path: path,
   });
   if (error) return { error: error.message };

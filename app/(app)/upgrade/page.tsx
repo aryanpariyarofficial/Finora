@@ -1,28 +1,13 @@
 import { redirect } from "next/navigation";
-import { Check, Infinity as InfinityIcon } from "lucide-react";
-import { PaymentRequestForm } from "@/components/upgrade/payment-request-form";
+import { ShieldCheck } from "lucide-react";
+import { PlansSection } from "@/components/upgrade/plans";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { PLANS } from "@/lib/billing";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getEntitlements } from "@/lib/entitlements";
-import { formatMoney } from "@/lib/finance";
 import { getDict } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Upgrade" };
-
-const PLAN_FEATURES = [
-  "Unlimited transaction history",
-  "Edit, delete & transfers",
-  "Unlimited accounts",
-  "Budgets, loans & investments",
-  "Reports + Excel/PDF export",
-];
 
 export default async function UpgradePage() {
   const supabase = await createClient();
@@ -61,14 +46,18 @@ export default async function UpgradePage() {
 
   return (
     <>
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">
+      <div className="mx-auto max-w-2xl text-center">
+        <h1 className="text-3xl font-bold tracking-tight">
           {t.upgrade.title}
         </h1>
-        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+        <p className="mt-2 text-sm text-muted-foreground">
           {t.upgrade.subtitle}
         </p>
-        <p className="mt-2 text-sm">
+        <p className="mt-3 flex items-center justify-center gap-2 text-sm">
+          <ShieldCheck className="size-4 text-[var(--success)]" />
+          <span className="text-muted-foreground">{t.upgrade.valueBlurb}</span>
+        </p>
+        <p className="mt-3 text-sm">
           {t.upgrade.currentPlan}:{" "}
           <Badge variant="secondary">{planLabel[ent.plan] ?? ent.plan}</Badge>{" "}
           {ent.lifetime ? (
@@ -81,63 +70,14 @@ export default async function UpgradePage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {PLANS.map((plan) => (
-          <Card
-            key={plan.id}
-            className={
-              plan.popular ? "border-[oklch(0.63_0.21_355)] shadow-md" : ""
-            }
-          >
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>{planLabel[plan.id]}</CardTitle>
-                {plan.popular && (
-                  <Badge className="bg-[oklch(0.63_0.21_355)] text-white">
-                    {t.upgrade.popular}
-                  </Badge>
-                )}
-              </div>
-              <p className="text-2xl font-bold">
-                {plan.price != null ? (
-                  formatMoney(plan.price)
-                ) : (
-                  <span className="text-base font-medium text-muted-foreground">
-                    {t.upgrade.pricePending}
-                  </span>
-                )}
-              </p>
-              <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                {plan.points != null ? (
-                  <>
-                    {plan.points} {t.upgrade.points} · {plan.days}{" "}
-                    {t.upgrade.daysLeft}
-                  </>
-                ) : (
-                  <>
-                    <InfinityIcon className="size-4" /> {t.upgrade.unlimited}
-                  </>
-                )}
-              </p>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-1.5 text-sm">
-                {PLAN_FEATURES.map((f) => (
-                  <li key={f} className="flex items-start gap-2">
-                    <Check className="mt-0.5 size-4 shrink-0 text-[var(--success)]" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <PaymentRequestForm
-        defaultName={profile?.full_name ?? ""}
-        defaultEmail={user.email ?? ""}
-        defaultPhone={profile?.phone ?? ""}
+      <PlansSection
+        currentPlan={ent.plan}
+        isPremium={ent.isPremium}
+        defaults={{
+          name: profile?.full_name ?? "",
+          email: user.email ?? "",
+          phone: profile?.phone ?? "",
+        }}
       />
 
       {requests && requests.length > 0 && (
