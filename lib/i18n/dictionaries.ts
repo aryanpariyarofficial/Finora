@@ -259,6 +259,14 @@ export const en = {
     title: "Notifications",
     empty: "You're all caught up.",
   },
+  dataExport: {
+    title: "Backup & export",
+    subtitle: "Download all your Finora data anytime.",
+    excel: "Export Excel",
+    json: "Export JSON (backup)",
+    done: "Export ready — check your downloads.",
+    premium: "Full data export is a premium feature. Upgrade to unlock.",
+  },
   onboard: {
     welcomeTitle: "Welcome to Finora 👋",
     welcomeBody:
@@ -655,6 +663,14 @@ export const ne: Dict = {
   notif: {
     title: "सूचनाहरू",
     empty: "सबै हेरिसक्नुभयो।",
+  },
+  dataExport: {
+    title: "ब्याकअप र एक्सपोर्ट",
+    subtitle: "आफ्नो सम्पूर्ण Finora डाटा जहिले पनि download गर्नुहोस्।",
+    excel: "एक्सेल एक्सपोर्ट",
+    json: "JSON एक्सपोर्ट (ब्याकअप)",
+    done: "एक्सपोर्ट तयार — downloads हेर्नुहोस्।",
+    premium: "पूर्ण डाटा एक्सपोर्ट premium feature हो। Upgrade गर्नुहोस्।",
   },
   onboard: {
     welcomeTitle: "Finora मा स्वागत छ 👋",

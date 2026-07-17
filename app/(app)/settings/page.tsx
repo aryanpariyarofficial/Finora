@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronRight, Languages, Palette, UserRound } from "lucide-react";
+import { DataExport } from "@/components/settings/data-export";
 import {
   Card,
   CardContent,
@@ -7,12 +8,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getEntitlements } from "@/lib/entitlements";
 import { getDict } from "@/lib/i18n/server";
 
 export const metadata = { title: "Settings" };
 
 export default async function SettingsPage() {
-  const t = await getDict();
+  const [t, ent] = await Promise.all([getDict(), getEntitlements()]);
 
   return (
     <>
@@ -54,6 +56,16 @@ export default async function SettingsPage() {
             <Palette className="size-4" /> Light / Dark — use the theme toggle
             in the top bar.
           </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{t.dataExport.title}</CardTitle>
+          <CardDescription>{t.dataExport.subtitle}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DataExport canExport={ent.isPremium} />
         </CardContent>
       </Card>
     </>
