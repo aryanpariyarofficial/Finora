@@ -1,8 +1,12 @@
-import { Banknote, Landmark, Wallet, CircleDollarSign } from "lucide-react";
+import Link from "next/link";
+import { Banknote, Landmark, Lock, Wallet, CircleDollarSign } from "lucide-react";
 import { AccountForm } from "@/components/accounts/account-form";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getAccounts } from "@/lib/data";
+import { getEntitlements } from "@/lib/entitlements";
 import { formatMoney } from "@/lib/finance";
+import { getDict } from "@/lib/i18n/server";
 
 export const metadata = { title: "Accounts" };
 
@@ -13,7 +17,11 @@ const subtypeIcon = {
 } as const;
 
 export default async function AccountsPage() {
-  const accounts = await getAccounts();
+  const [t, ent, accounts] = await Promise.all([
+    getDict(),
+    getEntitlements(),
+    getAccounts(),
+  ]);
   const moneyAccounts = accounts.filter(
     (a) => a.kind === "asset" || a.kind === "liability",
   );
@@ -26,12 +34,22 @@ export default async function AccountsPage() {
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Accounts</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {t.accounts.title}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Total balance: {formatMoney(total)}
+            {t.accounts.totalBalance}: {formatMoney(total)}
           </p>
         </div>
-        <AccountForm />
+        {ent.isPremium ? (
+          <AccountForm />
+        ) : (
+          <Button variant="outline" asChild>
+            <Link href="/upgrade">
+              <Lock className="size-4" /> {t.accounts.add} — {t.free.premium}
+            </Link>
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">

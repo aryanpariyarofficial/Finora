@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { getEntitlements } from "@/lib/entitlements";
 
 const accountSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(60),
@@ -21,6 +22,11 @@ export async function createAccount(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not signed in." };
+
+  const ent = await getEntitlements();
+  if (!ent.isPremium) {
+    return { error: "Adding accounts is a premium feature. Upgrade to unlock." };
+  }
 
   const parsed = accountSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {

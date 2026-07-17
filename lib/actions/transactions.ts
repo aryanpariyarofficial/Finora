@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { getEntitlements } from "@/lib/entitlements";
 
 const transactionSchema = z.object({
   type: z.enum(["income", "expense", "transfer"]),
@@ -43,6 +44,18 @@ export async function saveTransaction(
   }
 
   const v = parsed.data;
+  const editingIdRaw = String(formData.get("id") ?? "");
+
+  // Free tier: simple income/expense tracking only — no edits, no transfers.
+  const ent = await getEntitlements();
+  if (!ent.isPremium) {
+    if (editingIdRaw) {
+      return { error: "Editing transactions is a premium feature. Upgrade to unlock." };
+    }
+    if (v.type === "transfer") {
+      return { error: "Transfers are a premium feature. Upgrade to unlock." };
+    }
+  }
 
   if (v.type !== "transfer" && !v.category_id) {
     return { error: "Choose a category." };
@@ -67,7 +80,7 @@ export async function saveTransaction(
     location: v.location?.trim() || null,
   };
 
-  const editingId = String(formData.get("id") ?? "");
+  const editingId = editingIdRaw;
   const { error } = editingId
     ? await supabase.from("transactions").update(row).eq("id", editingId)
     : await supabase.from("transactions").insert(row);
@@ -80,7 +93,14 @@ export async function saveTransaction(
   return { success: true };
 }
 
-export async function deleteTransaction(id: string) {
+export async function deleteTransaction(
+  id: string,
+): Promise<{ error?: string; success?: boolean }> {
+  const ent = await getEntitlements();
+  if (!ent.isPremium) {
+    return { error: "Deleting transactions is a premium feature. Upgrade to unlock." };
+  }
+
   const supabase = await createClient();
   const { error } = await supabase.from("transactions").delete().eq("id", id);
   if (error) return { error: error.message };

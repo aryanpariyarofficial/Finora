@@ -24,8 +24,11 @@ npm install
 ### 2. Create a Supabase project
 
 1. Create a free project at [supabase.com/dashboard](https://supabase.com/dashboard)
-2. Open the **SQL Editor** and run the whole contents of
-   [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql)
+2. Open the **SQL Editor** and run, in order:
+   - [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql)
+   - [`supabase/migrations/0002_saas.sql`](supabase/migrations/0002_saas.sql)
+     (points/plans, payment verification, super-admin — edit the admin email
+     inside before running)
 3. (Optional) Enable **Google** under Authentication → Providers
 
 ### 3. Configure environment
@@ -88,16 +91,37 @@ supabase/
   migrations/     0001_init.sql — schema, triggers, RLS, storage
 ```
 
+## SaaS model (points system)
+
+1 point = 1 day of premium access, deducted lazily on app load (no cron).
+Plans: Monthly 30 pts · 6-Month 180 pts · Yearly 365 pts · Lifetime ∞.
+Users pay via eSewa/Khalti, submit a screenshot on `/upgrade`, and the
+super admin approves it on `/admin` (points are credited atomically with an
+audit ledger). Free tier: simple income/expense entry, latest 5 transactions,
+everything else view-only. Prices are placeholders in `lib/billing.ts`.
+
+## Features
+
+- **i18n:** English (default) + नेपाली via the top-bar switcher (cookie based)
+- **Dashboard:** balances, income/expense, net, savings rate, cash flow,
+  category donut, loan & investment widgets
+- **Transactions:** income/expense/transfer, filters, search, Excel/PDF export
+- **Budgets:** monthly per-category limits with live progress
+- **Loans:** ledger-integrated disbursement, EMI auto-calc, payment splitting
+  (interest → expense, principal → liability), amortization schedule
+- **Investments:** FD/shares/crypto/gold/MF, ROI, value history
+- **Reports:** period picker, category breakdowns, monthly trend, export
+- **Profile:** avatar upload, bio, phone; **Admin:** payment verification +
+  point management
+- **PWA:** installable on mobile with the Finora app icon
+
 ## Roadmap
 
-- **Phase 1 (done):** auth, dashboard, income/expense/transfer, accounts,
-  categories, filters/search
-- **Phase 2:** budgets, loans + EMI schedules, investments + ROI, reports,
-  receipt uploads, notifications
+- **Phase 1 + 2 (done):** everything above
 - **Phase 3:** AI insights, OCR bill scan, bank statement import, recurring
-  transactions
-- **Phase 4:** mobile app, offline sync, shared accounts, multi-currency,
-  tax reports
+  transactions, notifications
+- **Phase 4:** mobile app (React Native), offline sync, shared accounts,
+  multi-currency, tax reports
 
 ## Deployment
 

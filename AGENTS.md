@@ -33,3 +33,14 @@ shadcn/ui + Supabase (Postgres/Auth/Storage).
   light and dark). Don't introduce ad-hoc chart hexes.
 - Without real env vars, middleware redirects everything to `/setup` — this
   is intentional first-run UX.
+- **Entitlements:** call `getEntitlements()` (lib/entitlements.ts) in any
+  server action that mutates premium features — it also runs the lazy daily
+  point deduction (`sync_points` RPC). Free tier = add income/expense only.
+- **i18n:** strings live in `lib/i18n/dictionaries.ts` (en + ne, typed).
+  Server components use `getDict()`; client components use `useT()`. Always
+  add BOTH translations when adding a key.
+- **Admin:** super-admin role lives on `profiles.role`; admin mutations go
+  through security-definer RPCs (`review_payment_request`, `adjust_points`)
+  which re-check `is_super_admin()` inside the DB.
+- Pricing placeholders: `lib/billing.ts` `PLANS[].price` (null = "announced
+  soon").

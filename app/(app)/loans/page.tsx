@@ -1,21 +1,161 @@
-import { Landmark } from "lucide-react";
-import { ComingSoon } from "@/components/coming-soon";
+import Link from "next/link";
+import { Landmark, Lock } from "lucide-react";
+import { AmortizationDialog } from "@/components/loans/amortization-dialog";
+import { LoanForm } from "@/components/loans/loan-form";
+import { LoanPaymentForm } from "@/components/loans/loan-payment-form";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { getAccounts, getLoans } from "@/lib/data";
+import { getEntitlements } from "@/lib/entitlements";
+import { formatMoney } from "@/lib/finance";
+import { getDict } from "@/lib/i18n/server";
 
 export const metadata = { title: "Loans" };
 
-export default function LoansPage() {
+function nextDueDate(startDate: string, paymentsCount: number) {
+  const d = new Date(`${startDate}T00:00:00`);
+  d.setMonth(d.getMonth() + paymentsCount + 1);
+  return d.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+export default async function LoansPage() {
+  const [t, ent, accounts, loans] = await Promise.all([
+    getDict(),
+    getEntitlements(),
+    getAccounts(),
+    getLoans(),
+  ]);
+
+  const assetAccounts = accounts.filter((a) => a.kind === "asset");
+
   return (
-    <ComingSoon
-      title="Loans"
-      description="Track loans, EMIs and interest — fully integrated with your ledger."
-      phase="Phase 2"
-      icon={Landmark}
-      bullets={[
-        "EMI + amortization schedule calculator",
-        "Interest paid vs principal remaining",
-        "Next due date and payment history",
-        "Loan payments post to the double-entry ledger",
-      ]}
-    />
+    <>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {t.loans.title}
+          </h1>
+          <p className="text-sm text-muted-foreground">{t.loans.subtitle}</p>
+        </div>
+        {ent.isPremium ? (
+          <LoanForm accounts={assetAccounts} />
+        ) : (
+          <Button variant="outline" asChild>
+            <Link href="/upgrade">
+              <Lock className="size-4" /> {t.loans.add} — {t.free.premium}
+            </Link>
+          </Button>
+        )}
+      </div>
+
+      {loans.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
+            <div className="rounded-2xl bg-muted p-4">
+              <Landmark className="size-8 text-muted-foreground" />
+            </div>
+            <p className="text-sm text-muted-foreground">{t.loans.empty}</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          {loans.map((loan) => {
+            const paidPct = Math.min(
+              100,
+              Math.round((loan.principal_paid / loan.principal) * 100),
+            );
+            const closed = loan.status === "closed" || loan.outstanding <= 0;
+            return (
+              <Card key={loan.id}>
+                <CardHeader className="flex flex-row items-start justify-between gap-2">
+                  <div>
+                    <CardTitle>
+                      {loan.lender}
+                      {closed && (
+                        <Badge variant="secondary" className="ml-2">
+                          {t.loans.closed}
+                        </Badge>
+                      )}
+                    </CardTitle>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {formatMoney(loan.principal)} ·{" "}
+                      {loan.annual_interest_rate}% · {loan.term_months}{" "}
+                      {t.loans.month.toLowerCase()}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <AmortizationDialog
+                      lender={loan.lender}
+                      principal={loan.principal}
+                      ratePct={loan.annual_interest_rate}
+                      months={loan.term_months}
+                    />
+                    {ent.isPremium && !closed && (
+                      <LoanPaymentForm
+                        loanId={loan.id}
+                        lender={loan.lender}
+                        defaultAmount={loan.emi_amount}
+                        accounts={assetAccounts}
+                      />
+                    )}
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+                    <div>
+                      <p className="text-muted-foreground">
+                        {t.loans.outstanding}
+                      </p>
+                      <p className="font-semibold tabular-nums">
+                        {formatMoney(loan.outstanding)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">{t.loans.emi}</p>
+                      <p className="font-semibold tabular-nums">
+                        {loan.emi_amount != null
+                          ? formatMoney(loan.emi_amount)
+                          : "—"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">
+                        {t.loans.interestPaid}
+                      </p>
+                      <p className="font-semibold tabular-nums">
+                        {formatMoney(loan.interest_paid)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">
+                        {t.loans.nextDue}
+                      </p>
+                      <p className="font-semibold">
+                        {closed
+                          ? "—"
+                          : nextDueDate(loan.start_date, loan.payments_count)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Progress value={paidPct} />
+                    <p className="text-xs text-muted-foreground">
+                      {t.loans.principalPaid}: {formatMoney(loan.principal_paid)}{" "}
+                      / {formatMoney(loan.principal)} · {paidPct}%
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </>
   );
 }

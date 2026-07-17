@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { ArrowDownLeft, ArrowLeftRight, ArrowUpRight, Trash2 } from "lucide-react";
 import { deleteTransaction } from "@/lib/actions/transactions";
 import { formatDate, formatMoney } from "@/lib/finance";
+import { useT } from "@/components/locale-provider";
 import { PAYMENT_METHOD_LABELS, type TransactionWithNames } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -37,43 +38,44 @@ export function TransactionList({
   transactions: TransactionWithNames[];
   showDelete?: boolean;
 }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
 
   if (transactions.length === 0) {
     return (
       <p className="py-10 text-center text-sm text-muted-foreground">
-        No transactions yet. Add your first one to get started.
+        {t.tx.empty}
       </p>
     );
   }
 
   return (
     <ul className="divide-y">
-      {transactions.map((t) => {
+      {transactions.map((tx) => {
         const title =
-          t.type === "transfer"
-            ? `${t.account?.name ?? "?"} → ${t.counter_account?.name ?? "?"}`
-            : (t.category?.name ?? "Uncategorized");
+          tx.type === "transfer"
+            ? `${tx.account?.name ?? "?"} → ${tx.counter_account?.name ?? "?"}`
+            : (tx.category?.name ?? "Uncategorized");
         return (
-          <li key={t.id} className="flex items-center gap-3 py-3">
-            <TypeIcon type={t.type} />
+          <li key={tx.id} className="flex items-center gap-3 py-3">
+            <TypeIcon type={tx.type} />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">
                 {title}
-                {t.description && (
+                {tx.description && (
                   <span className="ml-2 font-normal text-muted-foreground">
-                    {t.description}
+                    {tx.description}
                   </span>
                 )}
               </p>
               <p className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
-                {formatDate(t.occurred_on)}
-                {t.type !== "transfer" && t.account?.name && (
-                  <span>· {t.account.name}</span>
+                {formatDate(tx.occurred_on)}
+                {tx.type !== "transfer" && tx.account?.name && (
+                  <span>· {tx.account.name}</span>
                 )}
-                {t.payment_method && (
+                {tx.payment_method && (
                   <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
-                    {PAYMENT_METHOD_LABELS[t.payment_method]}
+                    {PAYMENT_METHOD_LABELS[tx.payment_method]}
                   </Badge>
                 )}
               </p>
@@ -81,13 +83,13 @@ export function TransactionList({
             <span
               className={cn(
                 "text-sm font-semibold tabular-nums",
-                t.type === "income" && "text-[var(--success)]",
-                t.type === "expense" && "text-destructive",
+                tx.type === "income" && "text-[var(--success)]",
+                tx.type === "expense" && "text-destructive",
               )}
             >
               {formatMoney(
-                t.type === "expense" ? -t.amount : t.amount,
-                { signed: t.type === "income" },
+                tx.type === "expense" ? -tx.amount : tx.amount,
+                { signed: tx.type === "income" },
               )}
             </span>
             {showDelete && (
@@ -98,9 +100,9 @@ export function TransactionList({
                 disabled={pending}
                 onClick={() =>
                   startTransition(async () => {
-                    const res = await deleteTransaction(t.id);
+                    const res = await deleteTransaction(tx.id);
                     if (res?.error) toast.error(res.error);
-                    else toast.success("Transaction deleted");
+                    else toast.success(t.tx.deleted);
                   })
                 }
               >

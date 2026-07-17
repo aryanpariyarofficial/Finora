@@ -17,6 +17,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import { formatMoney } from "@/lib/finance";
+import { useT } from "@/components/locale-provider";
 import type { MonthPoint } from "@/lib/data";
 
 const config = {
@@ -24,12 +25,21 @@ const config = {
   expense: { label: "Expense", color: "var(--chart-2)" },
 } satisfies ChartConfig;
 
-export function CashflowChart({ data }: { data: MonthPoint[] }) {
+export function CashflowChart({
+  data,
+  title,
+  description,
+}: {
+  data: MonthPoint[];
+  title?: string;
+  description?: string;
+}) {
+  const t = useT();
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Cash flow</CardTitle>
-        <CardDescription>Income vs expense, last 6 months</CardDescription>
+        <CardTitle>{title ?? t.dash.cashflow}</CardTitle>
+        <CardDescription>{description ?? t.dash.cashflowDesc}</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={config} className="h-64 w-full">

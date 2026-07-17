@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useT } from "@/components/locale-provider";
 import type { AccountBalance } from "@/lib/types";
 
 export function FilterBar({
@@ -20,6 +21,7 @@ export function FilterBar({
   accounts: AccountBalance[];
   categories: AccountBalance[];
 }) {
+  const t = useT();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -45,7 +47,7 @@ export function FilterBar({
         <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           name="q"
-          placeholder="Search remarks, location…"
+          placeholder={t.tx.search}
           className="w-56 pl-8"
           defaultValue={searchParams.get("q") ?? ""}
         />
@@ -59,10 +61,10 @@ export function FilterBar({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All types</SelectItem>
-          <SelectItem value="income">Income</SelectItem>
-          <SelectItem value="expense">Expense</SelectItem>
-          <SelectItem value="transfer">Transfer</SelectItem>
+          <SelectItem value="all">{t.tx.allTypes}</SelectItem>
+          <SelectItem value="income">{t.tx.income}</SelectItem>
+          <SelectItem value="expense">{t.tx.expense}</SelectItem>
+          <SelectItem value="transfer">{t.tx.transfer}</SelectItem>
         </SelectContent>
       </Select>
 
@@ -74,7 +76,7 @@ export function FilterBar({
           <SelectValue placeholder="Account" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All accounts</SelectItem>
+          <SelectItem value="all">{t.tx.allAccounts}</SelectItem>
           {accounts.map((a) => (
             <SelectItem key={a.id} value={a.id}>
               {a.name}
@@ -91,7 +93,7 @@ export function FilterBar({
           <SelectValue placeholder="Category" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All categories</SelectItem>
+          <SelectItem value="all">{t.tx.allCategories}</SelectItem>
           {categories.map((c) => (
             <SelectItem key={c.id} value={c.id}>
               {c.name}
@@ -121,7 +123,7 @@ export function FilterBar({
           size="sm"
           onClick={() => router.push("/transactions")}
         >
-          <X className="size-4" /> Clear
+          <X className="size-4" /> {t.tx.clear}
         </Button>
       )}
     </div>

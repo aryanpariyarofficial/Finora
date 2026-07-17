@@ -15,6 +15,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import { formatMoney } from "@/lib/finance";
+import { useT } from "@/components/locale-provider";
 import type { CategoryTotal } from "@/lib/data";
 
 const COLORS = [
@@ -42,19 +43,20 @@ function fold(data: CategoryTotal[]) {
 }
 
 export function CategoryDonut({ data }: { data: CategoryTotal[] }) {
+  const t = useT();
   const folded = fold(data);
   const total = folded.reduce((acc, r) => acc + r.total, 0);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Expense categories</CardTitle>
-        <CardDescription>This month</CardDescription>
+        <CardTitle>{t.dash.expenseCategories}</CardTitle>
+        <CardDescription>{t.dash.thisMonth}</CardDescription>
       </CardHeader>
       <CardContent>
         {folded.length === 0 ? (
           <p className="flex h-64 items-center justify-center text-sm text-muted-foreground">
-            No expenses yet this month.
+            {t.dash.noExpenses}
           </p>
         ) : (
           <div className="flex flex-col items-center gap-4 sm:flex-row">

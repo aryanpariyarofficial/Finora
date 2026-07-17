@@ -2,7 +2,9 @@ import Link from "next/link";
 import {
   ArrowDownLeft,
   ArrowUpRight,
+  Landmark,
   PiggyBank,
+  TrendingUp,
   Wallet,
 } from "lucide-react";
 import { CashflowChart } from "@/components/dashboard/cashflow-chart";
@@ -21,10 +23,13 @@ import {
   getAccounts,
   getCashflowByMonth,
   getCategoryTotals,
+  getInvestments,
   getMonthlySummary,
   getRecentTransactions,
 } from "@/lib/data";
+import { getEntitlements } from "@/lib/entitlements";
 import { formatMoney, monthStart } from "@/lib/finance";
+import { getDict } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Dashboard" };
@@ -35,14 +40,25 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [accounts, summary, recent, categoryTotals, cashflow] =
-    await Promise.all([
-      getAccounts(),
-      getMonthlySummary(),
-      getRecentTransactions(8),
-      getCategoryTotals("expense", monthStart()),
-      getCashflowByMonth(6),
-    ]);
+  const [
+    t,
+    ent,
+    accounts,
+    summary,
+    recent,
+    categoryTotals,
+    cashflow,
+    investments,
+  ] = await Promise.all([
+    getDict(),
+    getEntitlements(),
+    getAccounts(),
+    getMonthlySummary(),
+    getRecentTransactions(8),
+    getCategoryTotals("expense", monthStart()),
+    getCashflowByMonth(6),
+    getInvestments(),
+  ]);
 
   const moneyAccounts = accounts.filter(
     (a) => a.kind === "asset" || a.kind === "liability",
@@ -58,6 +74,14 @@ export default async function DashboardPage() {
   const savingsRate =
     summary.income > 0 ? Math.round((net / summary.income) * 100) : 0;
 
+  const totalLoanOutstanding = accounts
+    .filter((a) => a.kind === "liability")
+    .reduce((acc, a) => acc + a.balance, 0);
+  const investmentValue = investments.reduce(
+    (acc, i) => acc + i.current_value,
+    0,
+  );
+
   const firstName =
     (user?.user_metadata?.full_name as string | undefined)?.split(" ")[0] ??
     user?.email?.split("@")[0] ??
@@ -68,50 +92,67 @@ export default async function DashboardPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Welcome, {firstName}
+            {t.dash.welcome}, {firstName}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Here&apos;s your money at a glance.
-          </p>
+          <p className="text-sm text-muted-foreground">{t.dash.subtitle}</p>
         </div>
         <TransactionForm
           accounts={moneyAccounts}
           incomeCategories={incomeCategories}
           expenseCategories={expenseCategories}
+          allowTransfer={ent.isPremium}
         />
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Current balance"
+          title={t.dash.currentBalance}
           value={formatMoney(currentBalance)}
-          hint={`${moneyAccounts.length} accounts`}
+          hint={`${moneyAccounts.length} ${t.dash.accounts}`}
           icon={Wallet}
         />
         <StatCard
-          title="Monthly income"
+          title={t.dash.monthlyIncome}
           value={formatMoney(summary.income)}
-          hint={`Today: ${formatMoney(summary.todayIncome)}`}
+          hint={`${t.dash.today}: ${formatMoney(summary.todayIncome)}`}
           icon={ArrowDownLeft}
           tone="positive"
         />
         <StatCard
-          title="Monthly expense"
+          title={t.dash.monthlyExpense}
           value={formatMoney(summary.expense)}
-          hint={`Today: ${formatMoney(summary.todayExpense)}`}
+          hint={`${t.dash.today}: ${formatMoney(summary.todayExpense)}`}
           icon={ArrowUpRight}
           tone="negative"
         />
         <StatCard
-          title="Net this month"
+          title={t.dash.netThisMonth}
           value={formatMoney(net, { signed: true })}
           hint={
-            summary.income > 0 ? `Savings rate ${savingsRate}%` : undefined
+            summary.income > 0
+              ? `${t.dash.savingsRate} ${savingsRate}%`
+              : undefined
           }
           icon={PiggyBank}
           tone={net >= 0 ? "positive" : "negative"}
         />
       </div>
+
+      {(totalLoanOutstanding > 0 || investmentValue > 0) && (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <StatCard
+            title={t.invest.totalValue}
+            value={formatMoney(investmentValue)}
+            icon={TrendingUp}
+          />
+          <StatCard
+            title={t.loans.outstanding}
+            value={formatMoney(totalLoanOutstanding)}
+            icon={Landmark}
+            tone={totalLoanOutstanding > 0 ? "negative" : "default"}
+          />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <CashflowChart data={cashflow} />
@@ -120,9 +161,9 @@ export default async function DashboardPage() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Recent transactions</CardTitle>
+          <CardTitle>{t.dash.recentTransactions}</CardTitle>
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/transactions">View all</Link>
+            <Link href="/transactions">{t.dash.viewAll}</Link>
           </Button>
         </CardHeader>
         <CardContent>
