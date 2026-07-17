@@ -11,6 +11,16 @@ function client() {
   return key ? new Resend(key) : null;
 }
 
+/** Escapes user-controlled strings before HTML interpolation. */
+function esc(value: string | null | undefined): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 /** Sends an email; never throws — email failures must not break the app flow. */
 export async function sendEmail(opts: {
   to: string;
@@ -91,11 +101,11 @@ export async function sendUpgradeRequestEmails(req: {
       subject: `💰 New upgrade request — ${req.fullName} (${planLabel})`,
       html: shell(
         "New payment to verify",
-        `<p><b>${req.fullName}</b> submitted a payment for the <b>${planLabel}</b> plan.</p>
+        `<p><b>${esc(req.fullName)}</b> submitted a payment for the <b>${planLabel}</b> plan.</p>
          <table style="font-size:14px;border-collapse:collapse;">
-           <tr><td style="padding:4px 16px 4px 0;color:#6b7194;">Email</td><td>${req.email}</td></tr>
-           <tr><td style="padding:4px 16px 4px 0;color:#6b7194;">WhatsApp</td><td>${req.phone}</td></tr>
-           <tr><td style="padding:4px 16px 4px 0;color:#6b7194;">Paid via</td><td style="text-transform:capitalize;">${method}</td></tr>
+           <tr><td style="padding:4px 16px 4px 0;color:#6b7194;">Email</td><td>${esc(req.email)}</td></tr>
+           <tr><td style="padding:4px 16px 4px 0;color:#6b7194;">WhatsApp</td><td>${esc(req.phone)}</td></tr>
+           <tr><td style="padding:4px 16px 4px 0;color:#6b7194;">Paid via</td><td style="text-transform:capitalize;">${esc(method)}</td></tr>
          </table>
          <p style="margin-top:16px;">Open the <b>Admin panel → Pending requests</b> to view the screenshot and approve.</p>`,
       ),
@@ -105,7 +115,7 @@ export async function sendUpgradeRequestEmails(req: {
       to: req.email,
       subject: "✅ Your Finora upgrade request has been received",
       html: shell(
-        `Thank you, ${req.fullName.split(" ")[0]}!`,
+        `Thank you, ${esc(req.fullName.split(" ")[0])}!`,
         `<p>Your upgrade request for the <b>${planLabel}</b> plan has been successfully submitted.</p>
          <p>Please wait a few minutes to a few hours — we verify every payment manually,
          and your premium points will be added as soon as it's confirmed. We will contact you soon.</p>
@@ -134,7 +144,7 @@ export async function sendUpgradeReviewedEmail(req: {
       to: req.email,
       subject: "🎉 Your Finora premium is now active!",
       html: shell(
-        `Welcome to Premium, ${firstName}!`,
+        `Welcome to Premium, ${esc(firstName)}!`,
         `<p>Your payment for the <b>${planLabel}</b> plan has been verified.</p>
          <p>${pointsLine}</p>
          <p>Everything is unlocked: full history, budgets, loans, investments, reports and exports. Enjoy!</p>
@@ -146,7 +156,7 @@ export async function sendUpgradeReviewedEmail(req: {
       to: req.email,
       subject: "About your Finora upgrade request",
       html: shell(
-        `Hi ${firstName},`,
+        `Hi ${esc(firstName)},`,
         `<p>We couldn't verify your payment for the <b>${planLabel}</b> plan, so the request was not approved.</p>
          <p>If you believe this is a mistake, please reach out — we'll sort it out quickly.</p>
          ${whatsappLine}`,
@@ -170,8 +180,8 @@ export async function sendEmiReminderEmail(opts: {
     to: opts.email,
     subject: `⏰ EMI reminder — ${opts.lender} due ${opts.dueDate}`,
     html: shell(
-      `Hi ${name}, your EMI is coming up`,
-      `<p>Your loan payment for <b>${opts.lender}</b> is due on <b>${opts.dueDate}</b>.</p>
+      `Hi ${esc(name)}, your EMI is coming up`,
+      `<p>Your loan payment for <b>${esc(opts.lender)}</b> is due on <b>${opts.dueDate}</b>.</p>
        <table style="font-size:14px;border-collapse:collapse;">
          ${
            opts.emiAmount != null
@@ -198,8 +208,8 @@ export async function sendMaturityReminderEmail(opts: {
     to: opts.email,
     subject: `📈 Investment maturing — ${opts.investmentName} on ${opts.maturesOn}`,
     html: shell(
-      `Hi ${name}, an investment is maturing`,
-      `<p>Your investment <b>${opts.investmentName}</b> matures on <b>${opts.maturesOn}</b>.</p>
+      `Hi ${esc(name)}, an investment is maturing`,
+      `<p>Your investment <b>${esc(opts.investmentName)}</b> matures on <b>${opts.maturesOn}</b>.</p>
        <p>Current recorded value: <b>${formatMoney(opts.currentValue)}</b></p>
        <p>Don't forget to update its final value in Finora, or roll it into a new investment.</p>`,
     ),

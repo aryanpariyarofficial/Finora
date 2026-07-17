@@ -5,8 +5,6 @@
 Track income, expenses, budgets, loans and investments — built on a
 double-entry accounting core so your numbers always add up.
 
-![Finora brand kit](public/branding/finora-brand-kit.png)
-
 ## Tech stack
 
 - **Next.js 16** (App Router, Server Actions, Turbopack) + React 19 + TypeScript

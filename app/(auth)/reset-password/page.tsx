@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -37,6 +36,7 @@ export default function ResetPasswordPage() {
     }
 
     setPending(true);
+    const { createClient } = await import("@/lib/supabase/client");
     const supabase = createClient();
     const { error: updateError } = await supabase.auth.updateUser({ password });
     setPending(false);

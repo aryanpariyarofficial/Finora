@@ -20,7 +20,10 @@ const geistMono = Geist_Mono({
 const notoDevanagari = Noto_Sans_Devanagari({
   variable: "--font-devanagari",
   subsets: ["devanagari"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "700"],
+  // Fallback font in --font-sans; only fetched when Devanagari glyphs render,
+  // so English users never download it up front.
+  preload: false,
 });
 
 export const viewport: Viewport = {

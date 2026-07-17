@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Camera } from "lucide-react";
 import { setAvatarUrl } from "@/lib/actions/profile";
-import { createClient } from "@/lib/supabase/client";
 import { useT } from "@/components/locale-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -31,6 +30,7 @@ export function AvatarUpload({
     }
     setUploading(true);
     try {
+      const { createClient } = await import("@/lib/supabase/client");
       const supabase = createClient();
       const ext = file.name.split(".").pop() ?? "png";
       const path = `${userId}/avatar-${Date.now()}.${ext}`;

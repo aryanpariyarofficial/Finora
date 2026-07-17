@@ -7,8 +7,7 @@ import {
   TrendingUp,
   Wallet,
 } from "lucide-react";
-import { CashflowChart } from "@/components/dashboard/cashflow-chart";
-import { CategoryDonut } from "@/components/dashboard/category-donut";
+import { CashflowChart, CategoryDonut } from "@/components/dashboard/lazy-charts";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { TransactionForm } from "@/components/transactions/transaction-form";
 import { TransactionList } from "@/components/transactions/transaction-list";

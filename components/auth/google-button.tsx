@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/client";
 
 export function GoogleButton() {
   const [loading, setLoading] = useState(false);
 
   async function signInWithGoogle() {
     setLoading(true);
+    const { createClient } = await import("@/lib/supabase/client");
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",

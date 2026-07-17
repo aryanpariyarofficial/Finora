@@ -42,5 +42,11 @@ shadcn/ui + Supabase (Postgres/Auth/Storage).
 - **Admin:** super-admin role lives on `profiles.role`; admin mutations go
   through security-definer RPCs (`review_payment_request`, `adjust_points`)
   which re-check `is_super_admin()` inside the DB.
-- Pricing placeholders: `lib/billing.ts` `PLANS[].price` (null = "announced
-  soon").
+- Pricing lives in `lib/billing.ts` `PLANS[].price`.
+- **Security invariants:** all user-controlled strings interpolated into
+  email HTML must go through `esc()` in lib/email.ts; redirect targets from
+  query params must be validated internal paths; storage URLs saved to
+  profiles must point at our own bucket under the user's folder; cron
+  endpoints require CRON_SECRET in production; ledger triggers verify
+  account ownership (migration 0006) — keep that check when altering
+  sync_postings.

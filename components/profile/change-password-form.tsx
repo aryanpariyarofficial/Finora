@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
 import { useT } from "@/components/locale-provider";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -29,6 +28,7 @@ export function ChangePasswordForm() {
     }
 
     setPending(true);
+    const { createClient } = await import("@/lib/supabase/client");
     const supabase = createClient();
     const { error } = await supabase.auth.updateUser({ password });
     setPending(false);

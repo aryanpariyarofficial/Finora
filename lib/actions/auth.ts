@@ -20,8 +20,12 @@ export async function login(
 
   if (error) return { error: error.message };
 
+  // Only allow internal redirect targets (prevents open-redirect phishing).
+  const next = String(formData.get("next") || "/dashboard");
+  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+
   revalidatePath("/", "layout");
-  redirect(String(formData.get("next") || "/dashboard"));
+  redirect(safeNext);
 }
 
 export async function signup(

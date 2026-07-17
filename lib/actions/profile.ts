@@ -71,6 +71,12 @@ export async function setAvatarUrl(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not signed in." };
 
+  // Only accept avatars from our own storage bucket, under this user's folder.
+  const expectedPrefix = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${user.id}/`;
+  if (!url.startsWith(expectedPrefix)) {
+    return { error: "Invalid avatar URL." };
+  }
+
   const { error } = await supabase
     .from("profiles")
     .update({ avatar_url: url })

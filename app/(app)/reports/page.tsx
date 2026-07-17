@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { ArrowDownLeft, ArrowUpRight, Hash, Lock, PiggyBank } from "lucide-react";
-import { CashflowChart } from "@/components/dashboard/cashflow-chart";
+import { CashflowChart } from "@/components/dashboard/lazy-charts";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { PeriodPicker } from "@/components/reports/period-picker";
 import { ReportExport } from "@/components/reports/report-export";

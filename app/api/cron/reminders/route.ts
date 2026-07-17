@@ -26,7 +26,15 @@ function nextDueDate(startDate: string, paymentsCount: number) {
  * Deduped via the notifications table, one notification per due date.
  */
 export async function GET(request: Request) {
+  // In production the secret is mandatory — an open endpoint would let
+  // anyone trigger email sends.
   const secret = process.env.CRON_SECRET;
+  if (!secret && process.env.NODE_ENV === "production") {
+    return NextResponse.json(
+      { error: "CRON_SECRET not configured" },
+      { status: 503 },
+    );
+  }
   if (secret && request.headers.get("authorization") !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
