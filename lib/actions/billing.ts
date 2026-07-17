@@ -70,6 +70,12 @@ export async function submitPaymentRequest(
   });
   if (error) return { error: error.message };
 
+  // Remember the name & WhatsApp number so future forms pre-fill them.
+  await supabase
+    .from("profiles")
+    .update({ full_name: parsed.data.full_name, phone: parsed.data.phone })
+    .eq("id", user.id);
+
   // Notify the admin + confirm to the client. Never blocks the request.
   await sendUpgradeRequestEmails({
     fullName: parsed.data.full_name,

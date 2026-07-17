@@ -369,7 +369,9 @@ function CheckoutDialog({
                 name="email"
                 type="email"
                 required
+                readOnly
                 defaultValue={defaults.email}
+                className="cursor-not-allowed bg-muted text-muted-foreground"
               />
             </div>
             <div className="space-y-2">
