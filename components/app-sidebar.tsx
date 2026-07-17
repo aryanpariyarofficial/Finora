@@ -13,6 +13,7 @@ import {
   Settings,
   ShieldCheck,
   Sparkles,
+  Target,
   TrendingUp,
   Wallet,
 } from "lucide-react";
@@ -58,6 +59,7 @@ export function AppSidebar({
     { title: t.nav.loans, href: "/loans", icon: Landmark },
     { title: t.nav.investments, href: "/investments", icon: TrendingUp },
     { title: t.nav.recurring, href: "/recurring", icon: Repeat },
+    { title: t.nav.goals, href: "/goals", icon: Target },
     { title: t.nav.reports, href: "/reports", icon: ChartColumnBig },
   ];
 
