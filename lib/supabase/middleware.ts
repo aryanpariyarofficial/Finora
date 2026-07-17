@@ -2,7 +2,15 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isSupabaseConfigured, SUPABASE_ANON_KEY, SUPABASE_URL } from "./env";
 
-const PUBLIC_PATHS = ["/login", "/signup", "/forgot-password", "/auth", "/setup"];
+// /api/cron authenticates itself via CRON_SECRET, not a user session.
+const PUBLIC_PATHS = [
+  "/login",
+  "/signup",
+  "/forgot-password",
+  "/auth",
+  "/setup",
+  "/api/cron",
+];
 
 export async function updateSession(request: NextRequest) {
   // Before credentials are configured, send everything to the setup notice.

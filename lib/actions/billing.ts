@@ -4,6 +4,10 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { PLAN_POINTS } from "@/lib/billing";
+import {
+  sendUpgradeRequestEmails,
+  sendUpgradeReviewedEmail,
+} from "@/lib/email";
 
 const requestSchema = z.object({
   full_name: z.string().trim().min(1, "Name is required").max(100),
@@ -66,6 +70,15 @@ export async function submitPaymentRequest(
   });
   if (error) return { error: error.message };
 
+  // Notify the admin + confirm to the client. Never blocks the request.
+  await sendUpgradeRequestEmails({
+    fullName: parsed.data.full_name,
+    email: parsed.data.email,
+    phone: parsed.data.phone,
+    plan: parsed.data.plan,
+    payMethod: parsed.data.pay_method,
+  });
+
   revalidatePath("/upgrade");
   return { success: true };
 }
@@ -102,6 +115,12 @@ export async function reviewPaymentRequest(
       ? PLAN_POINTS[plan as keyof typeof PLAN_POINTS]
       : null;
 
+  const { data: request } = await supabase
+    .from("payment_requests")
+    .select("full_name, email, plan")
+    .eq("id", requestId)
+    .single();
+
   const { error } = await supabase.rpc("review_payment_request", {
     p_request_id: requestId,
     p_action: action,
@@ -109,6 +128,16 @@ export async function reviewPaymentRequest(
     p_note: note ?? null,
   });
   if (error) return { error: error.message };
+
+  if (request) {
+    await sendUpgradeReviewedEmail({
+      fullName: request.full_name,
+      email: request.email,
+      plan: request.plan,
+      approved: action === "approved",
+      points,
+    });
+  }
 
   revalidatePath("/admin");
   return { success: true };
