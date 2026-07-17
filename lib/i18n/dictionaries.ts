@@ -88,6 +88,15 @@ export const en = {
     create: "Create account",
     creating: "Creating…",
     created: "Account created",
+    setBalance: "Set balance",
+    setBalanceFor: "Set balance",
+    currentBalanceLabel: "Current balance",
+    newBalance: "Actual balance now (Rs.)",
+    newBalanceHint:
+      "Enter how much is actually in this account right now — Finora records the difference as an adjustment.",
+    saveBalance: "Save balance",
+    balanceSaved: "Balance updated",
+    tapToSet: "Tap to set balance",
   },
   upgrade: {
     title: "Upgrade to Premium",
@@ -389,6 +398,15 @@ export const ne: Dict = {
     create: "खाता बनाउनुहोस्",
     creating: "बन्दैछ…",
     created: "खाता बनाइयो",
+    setBalance: "ब्यालेन्स सेट गर्नुहोस्",
+    setBalanceFor: "ब्यालेन्स सेट गर्नुहोस्",
+    currentBalanceLabel: "हालको ब्यालेन्स",
+    newBalance: "अहिलेको वास्तविक रकम (रु.)",
+    newBalanceHint:
+      "यो खातामा अहिले जति छ त्यति लेख्नुहोस् — Finora ले फरक रकम adjustment को रूपमा राख्छ।",
+    saveBalance: "ब्यालेन्स सेभ गर्नुहोस्",
+    balanceSaved: "ब्यालेन्स अपडेट भयो",
+    tapToSet: "ब्यालेन्स सेट गर्न थिच्नुहोस्",
   },
   upgrade: {
     title: "प्रिमियममा अपग्रेड गर्नुहोस्",

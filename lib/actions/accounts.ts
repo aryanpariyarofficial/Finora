@@ -78,6 +78,74 @@ export async function createAccount(
   return { success: true };
 }
 
+/**
+ * Sets a money account to a target balance by booking the difference as an
+ * adjustment against Opening Balances equity. Works for the first-time
+ * opening balance and for later corrections. Allowed on the free plan.
+ */
+export async function setAccountBalance(
+  accountId: string,
+  targetBalance: number,
+): Promise<{ error?: string; success?: boolean }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not signed in." };
+
+  if (!Number.isFinite(targetBalance) || targetBalance < 0) {
+    return { error: "Enter a valid amount." };
+  }
+
+  // The account must be the caller's own money account.
+  const { data: account } = await supabase
+    .from("accounts")
+    .select("id, kind")
+    .eq("id", accountId)
+    .single();
+  if (!account || (account.kind !== "asset" && account.kind !== "liability")) {
+    return { error: "Account not found." };
+  }
+
+  const { data: balanceRow } = await supabase
+    .from("account_balances")
+    .select("balance")
+    .eq("id", accountId)
+    .single();
+  const current = Number(balanceRow?.balance ?? 0);
+  const delta = Math.round((targetBalance - current) * 100) / 100;
+  if (delta === 0) return { success: true };
+
+  const { data: equity } = await supabase
+    .from("accounts")
+    .select("id")
+    .eq("kind", "equity")
+    .eq("is_system", true)
+    .limit(1)
+    .single();
+  if (!equity) return { error: "Opening Balances account not found." };
+
+  // delta > 0 → increase the money account (debit it); delta < 0 → decrease.
+  const row =
+    delta > 0
+      ? { account_id: equity.id, counter_account_id: accountId }
+      : { account_id: accountId, counter_account_id: equity.id };
+
+  const { error } = await supabase.from("transactions").insert({
+    user_id: user.id,
+    type: "adjustment",
+    amount: Math.abs(delta),
+    account_id: row.account_id,
+    counter_account_id: row.counter_account_id,
+    description: "Balance adjustment",
+  });
+  if (error) return { error: error.message };
+
+  revalidatePath("/accounts");
+  revalidatePath("/dashboard");
+  return { success: true };
+}
+
 export async function archiveAccount(id: string) {
   const supabase = await createClient();
   const { error } = await supabase

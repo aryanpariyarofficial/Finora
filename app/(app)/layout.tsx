@@ -82,16 +82,12 @@ export default async function AppLayout({
               />
               <LanguageSwitcher />
               <ThemeToggle />
-              <Link
-                href="/profile"
-                aria-label="Profile"
-                className="md:hidden"
-              >
-                <Avatar className="size-8 border">
+              <Link href="/profile" aria-label="Profile" className="ml-1">
+                <Avatar className="size-8 ring-2 ring-[oklch(0.63_0.21_355)]/40 ring-offset-2 ring-offset-background transition-transform hover:scale-105">
                   {profile?.avatar_url && (
                     <AvatarImage src={profile.avatar_url} alt={userName} />
                   )}
-                  <AvatarFallback className="text-xs">
+                  <AvatarFallback className="bg-[oklch(0.63_0.21_355)]/15 text-xs font-medium text-[oklch(0.55_0.21_355)]">
                     {userName.slice(0, 1).toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
