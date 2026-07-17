@@ -135,11 +135,11 @@ function BSDatePicker({
     locale === "ne" ? toNepaliDigits(n) : String(n);
 
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="flex gap-2">
       <input type="hidden" name={name} value={iso} required={required} />
-      {/* Year */}
+      {/* Year — widest */}
       <Select value={String(year)} onValueChange={(v) => setYear(Number(v))}>
-        <SelectTrigger id={id} className="w-full">
+        <SelectTrigger id={id} className="flex-[1.2] min-w-[4.5rem]">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -152,7 +152,7 @@ function BSDatePicker({
       </Select>
       {/* Month */}
       <Select value={String(month)} onValueChange={(v) => setMonth(Number(v))}>
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="flex-[1.6] min-w-[5.5rem]">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -165,7 +165,7 @@ function BSDatePicker({
       </Select>
       {/* Day */}
       <Select value={String(safeDay)} onValueChange={(v) => setDay(Number(v))}>
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="flex-1 min-w-[3.5rem]">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

@@ -52,7 +52,7 @@ export function LoanForm({ accounts }: { accounts: AccountBalance[] }) {
           <Plus /> {t.loans.add}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{t.loans.add}</DialogTitle>
         </DialogHeader>
@@ -90,28 +90,26 @@ export function LoanForm({ accounts }: { accounts: AccountBalance[] }) {
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label htmlFor="start_date">{t.loans.startDate}</Label>
-              <DateField
-                id="start_date"
-                name="start_date"
-                required
-                defaultValue={todayISO()}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="term_months">{t.loans.term}</Label>
-              <Input
-                id="term_months"
-                name="term_months"
-                type="number"
-                min="1"
-                step="1"
-                required
-                placeholder="60"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="start_date">{t.loans.startDate}</Label>
+            <DateField
+              id="start_date"
+              name="start_date"
+              required
+              defaultValue={todayISO()}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="term_months">{t.loans.term}</Label>
+            <Input
+              id="term_months"
+              name="term_months"
+              type="number"
+              min="1"
+              step="1"
+              required
+              placeholder="60"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="months_paid">{t.loans.monthsPaid}</Label>

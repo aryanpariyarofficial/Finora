@@ -84,7 +84,7 @@ export function TransactionForm({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{transaction ? t.tx.edit : t.tx.add}</DialogTitle>
         </DialogHeader>
@@ -114,30 +114,28 @@ export function TransactionForm({
           )}
           <input type="hidden" name="type" value={type} />
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label htmlFor="amount">{t.tx.amount}</Label>
-              <Input
-                id="amount"
-                name="amount"
-                type="number"
-                inputMode="decimal"
-                step="0.01"
-                min="0.01"
-                required
-                defaultValue={transaction?.amount}
-                placeholder="0.00"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="occurred_on">{t.tx.date}</Label>
-              <DateField
-                id="occurred_on"
-                name="occurred_on"
-                required
-                defaultValue={transaction?.occurred_on ?? todayISO()}
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="amount">{t.tx.amount}</Label>
+            <Input
+              id="amount"
+              name="amount"
+              type="number"
+              inputMode="decimal"
+              step="0.01"
+              min="0.01"
+              required
+              defaultValue={transaction?.amount}
+              placeholder="0.00"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="occurred_on">{t.tx.date}</Label>
+            <DateField
+              id="occurred_on"
+              name="occurred_on"
+              required
+              defaultValue={transaction?.occurred_on ?? todayISO()}
+            />
           </div>
 
           <div className="space-y-2">

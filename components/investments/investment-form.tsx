@@ -50,7 +50,7 @@ export function InvestmentForm() {
           <Plus /> {t.invest.add}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{t.invest.add}</DialogTitle>
         </DialogHeader>
@@ -121,20 +121,18 @@ export function InvestmentForm() {
               placeholder="10"
             />
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label htmlFor="invested_on">{t.invest.investedOn}</Label>
-              <DateField
-                id="invested_on"
-                name="invested_on"
-                required
-                defaultValue={todayISO()}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="matures_on">{t.invest.maturesOn}</Label>
-              <DateField id="matures_on" name="matures_on" optional />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="invested_on">{t.invest.investedOn}</Label>
+            <DateField
+              id="invested_on"
+              name="invested_on"
+              required
+              defaultValue={todayISO()}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="matures_on">{t.invest.maturesOn}</Label>
+            <DateField id="matures_on" name="matures_on" optional />
           </div>
           <Button type="submit" className="w-full" disabled={pending}>
             {pending ? t.invest.saving : t.invest.save}
