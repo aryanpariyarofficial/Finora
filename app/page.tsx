@@ -244,9 +244,52 @@ const faqs = [
   },
 ];
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://finoraypf.vercel.app";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      name: "Finora",
+      applicationCategory: "FinanceApplication",
+      operatingSystem: "Web, Android, iOS",
+      description:
+        "Personal finance app for Nepal — track income, expenses, budgets, loans and investments with NPR, eSewa, Khalti and Bikram Sambat support.",
+      url: SITE_URL,
+      offers: [
+        { "@type": "Offer", price: "0", priceCurrency: "NPR", name: "Free" },
+        { "@type": "Offer", price: "500", priceCurrency: "NPR", name: "Monthly" },
+        { "@type": "Offer", price: "2000", priceCurrency: "NPR", name: "6 Months" },
+        { "@type": "Offer", price: "3000", priceCurrency: "NPR", name: "1 Year" },
+        { "@type": "Offer", price: "10000", priceCurrency: "NPR", name: "Lifetime" },
+      ],
+    },
+    {
+      "@type": "Organization",
+      name: "Finora",
+      url: SITE_URL,
+      logo: `${SITE_URL}/icon-512.png`,
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faqs.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ],
+};
+
 export default function LandingPage() {
   return (
     <main className="flex min-h-screen flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Nav */}
       <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
