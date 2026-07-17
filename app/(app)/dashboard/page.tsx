@@ -8,6 +8,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { CashflowChart, CategoryDonut } from "@/components/dashboard/lazy-charts";
+import { OnboardingDialog } from "@/components/onboarding/onboarding-dialog";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { TransactionForm } from "@/components/transactions/transaction-form";
 import { TransactionList } from "@/components/transactions/transaction-list";
@@ -65,6 +66,13 @@ export default async function DashboardPage() {
   const incomeCategories = accounts.filter((a) => a.kind === "income");
   const expenseCategories = accounts.filter((a) => a.kind === "expense");
 
+  const { data: onboardRow } = await supabase
+    .from("profiles")
+    .select("onboarded_at, locale, calendar")
+    .eq("id", user?.id ?? "")
+    .single();
+  const needsOnboarding = onboardRow != null && onboardRow.onboarded_at == null;
+
   const currentBalance = moneyAccounts.reduce(
     (acc, a) => acc + (a.kind === "liability" ? -a.balance : a.balance),
     0,
@@ -88,6 +96,14 @@ export default async function DashboardPage() {
 
   return (
     <>
+      {needsOnboarding && (
+        <OnboardingDialog
+          accounts={moneyAccounts}
+          expenseCategories={expenseCategories}
+          initialLocale={onboardRow?.locale ?? "en"}
+          initialCalendar={onboardRow?.calendar ?? "ad"}
+        />
+      )}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">

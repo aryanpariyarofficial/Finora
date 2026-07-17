@@ -209,6 +209,31 @@ export const en = {
     language: "Language",
     loggingIn: "Logging in…",
   },
+  onboard: {
+    welcomeTitle: "Welcome to Finora 👋",
+    welcomeBody:
+      "Let's set things up in under a minute. First, how would you like Finora to look?",
+    prefsLang: "Language",
+    prefsCalendar: "Calendar",
+    step: "Step",
+    of: "of",
+    next: "Next",
+    back: "Back",
+    skip: "Skip for now",
+    finish: "Finish setup",
+    balanceTitle: "Add your current balances 💰",
+    balanceBody:
+      "How much do you have right now in each account? You can change these anytime.",
+    firstTxTitle: "Log your first expense ✍️",
+    firstTxBody:
+      "Add something you spent recently — a coffee, fuel, groceries. This is how you'll track daily.",
+    firstTxAmount: "Amount (Rs.)",
+    firstTxCategory: "Category",
+    doneTitle: "You're all set! 🎉",
+    doneBody:
+      "Your Finora is ready. Add transactions daily, set budgets, and watch your savings grow.",
+    saved: "Setup complete!",
+  },
   budgets: {
     title: "Budgets",
     subtitle: "Set monthly limits per category and track progress.",
@@ -528,6 +553,31 @@ export const ne: Dict = {
     comingSoon: "चाँडै आउँदैछ",
     language: "भाषा",
     loggingIn: "लग इन हुँदैछ…",
+  },
+  onboard: {
+    welcomeTitle: "Finora मा स्वागत छ 👋",
+    welcomeBody:
+      "एक मिनेटभित्रै सेटअप गरौं। पहिले, Finora कस्तो देखियोस्?",
+    prefsLang: "भाषा",
+    prefsCalendar: "पात्रो",
+    step: "चरण",
+    of: "/",
+    next: "अर्को",
+    back: "पछाडि",
+    skip: "अहिलेलाई छाड्नुहोस्",
+    finish: "सेटअप सक्नुहोस्",
+    balanceTitle: "हालको ब्यालेन्स हाल्नुहोस् 💰",
+    balanceBody:
+      "अहिले हरेक खातामा कति छ? यो जहिले पनि बदल्न मिल्छ।",
+    firstTxTitle: "पहिलो खर्च लेख्नुहोस् ✍️",
+    firstTxBody:
+      "भर्खरै गरेको कुनै खर्च थप्नुहोस् — चिया, इन्धन, किराना। दैनिक यसरी नै track गर्ने हो।",
+    firstTxAmount: "रकम (रु.)",
+    firstTxCategory: "वर्ग",
+    doneTitle: "सबै तयार भयो! 🎉",
+    doneBody:
+      "तपाईंको Finora तयार छ। दैनिक कारोबार थप्नुहोस्, बजेट राख्नुहोस्, र बचत बढ्दै गएको हेर्नुहोस्।",
+    saved: "सेटअप पूरा भयो!",
   },
   budgets: {
     title: "बजेट",
