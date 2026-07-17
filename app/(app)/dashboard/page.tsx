@@ -26,6 +26,7 @@ import {
   getInvestments,
   getMonthlySummary,
   getRecentTransactions,
+  runDueRecurring,
 } from "@/lib/data";
 import { getEntitlements } from "@/lib/entitlements";
 import { formatMoney, monthStart } from "@/lib/finance";
@@ -39,6 +40,9 @@ export default async function DashboardPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  // Materialize any due recurring transactions before computing totals.
+  await runDueRecurring();
 
   const [
     t,

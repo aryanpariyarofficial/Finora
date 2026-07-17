@@ -9,6 +9,7 @@ import {
   Landmark,
   LogOut,
   PiggyBank,
+  Repeat,
   Settings,
   ShieldCheck,
   Sparkles,
@@ -56,6 +57,7 @@ export function AppSidebar({
   const growNav = [
     { title: t.nav.loans, href: "/loans", icon: Landmark },
     { title: t.nav.investments, href: "/investments", icon: TrendingUp },
+    { title: t.nav.recurring, href: "/recurring", icon: Repeat },
     { title: t.nav.reports, href: "/reports", icon: ChartColumnBig },
   ];
 

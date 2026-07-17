@@ -269,6 +269,48 @@ export async function getInvestments(): Promise<InvestmentRow[]> {
   }));
 }
 
+// ---------- Recurring ----------
+
+export interface RecurringRow {
+  id: string;
+  type: string;
+  amount: number;
+  account_id: string;
+  category_id: string | null;
+  counter_account_id: string | null;
+  description: string | null;
+  frequency: string;
+  interval_count: number;
+  next_run: string;
+  active: boolean;
+  account: { name: string } | null;
+  category: { name: string } | null;
+  counter_account: { name: string } | null;
+}
+
+/** Generates any due recurring transactions (lazy, back-fills missed periods). */
+export async function runDueRecurring(): Promise<void> {
+  const supabase = await createClient();
+  await supabase.rpc("generate_due_recurring");
+}
+
+export async function getRecurring(): Promise<RecurringRow[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("recurring_transactions")
+    .select(
+      `*,
+       account:accounts!recurring_transactions_account_id_fkey (name),
+       category:accounts!recurring_transactions_category_id_fkey (name),
+       counter_account:accounts!recurring_transactions_counter_account_id_fkey (name)`,
+    )
+    .order("next_run");
+  return (data ?? []).map((r) => ({
+    ...r,
+    amount: Number(r.amount),
+  })) as unknown as RecurringRow[];
+}
+
 // ---------- Reports ----------
 
 export interface ReportData {
