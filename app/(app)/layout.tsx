@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { AppSidebar } from "@/components/app-sidebar";
@@ -9,6 +10,7 @@ import { PrefsSync } from "@/components/prefs-sync";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TodayDate } from "@/components/today-date";
 import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getAccounts } from "@/lib/data";
@@ -80,6 +82,20 @@ export default async function AppLayout({
               />
               <LanguageSwitcher />
               <ThemeToggle />
+              <Link
+                href="/profile"
+                aria-label="Profile"
+                className="md:hidden"
+              >
+                <Avatar className="size-8 border">
+                  {profile?.avatar_url && (
+                    <AvatarImage src={profile.avatar_url} alt={userName} />
+                  )}
+                  <AvatarFallback className="text-xs">
+                    {userName.slice(0, 1).toUpperCase() || "U"}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
             </div>
           </header>
           <div className="flex flex-1 flex-col gap-6 p-4 pb-28 md:p-6 md:pb-6">
