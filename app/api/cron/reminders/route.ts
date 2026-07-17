@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
+  sendBudgetExceededEmail,
   sendEmiReminderEmail,
+  sendLowPointsEmail,
   sendMaturityReminderEmail,
 } from "@/lib/email";
 
@@ -54,6 +56,29 @@ export async function GET(request: Request) {
 
   let emiSent = 0;
   let maturitySent = 0;
+  let budgetSent = 0;
+  let lowPointsSent = 0;
+
+  const monthStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
+  const monthFirst = `${monthStr}-01`;
+
+  async function notifyOnce(
+    userId: string,
+    dedupeKey: string,
+    title: string,
+    body: string,
+  ): Promise<boolean> {
+    const { data: existing } = await supabase!
+      .from("notifications")
+      .select("id")
+      .eq("type", dedupeKey)
+      .limit(1);
+    if (existing && existing.length > 0) return false;
+    await supabase!
+      .from("notifications")
+      .insert({ user_id: userId, type: dedupeKey, title, body });
+    return true;
+  }
 
   // ---------- Loan EMI reminders ----------
   const { data: loans } = await supabase
@@ -159,5 +184,79 @@ export async function GET(request: Request) {
     maturitySent++;
   }
 
-  return NextResponse.json({ ok: true, emiSent, maturitySent });
+  // ---------- Budget-exceeded alerts (once per budget per month) ----------
+  const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+  const { data: budgets } = await supabase
+    .from("budgets")
+    .select("id, user_id, category_id, amount")
+    .eq("month", monthFirst);
+
+  for (const b of budgets ?? []) {
+    const { data: txs } = await supabase
+      .from("transactions")
+      .select("amount")
+      .eq("type", "expense")
+      .eq("category_id", b.category_id)
+      .gte("occurred_on", monthFirst)
+      .lt("occurred_on", toISODate(monthEnd));
+    const spent = (txs ?? []).reduce((acc, x) => acc + Number(x.amount), 0);
+    if (spent <= Number(b.amount)) continue;
+
+    const [{ data: profile }, { data: cat }] = await Promise.all([
+      supabase.from("profiles").select("email, full_name").eq("id", b.user_id).single(),
+      supabase.from("accounts").select("name").eq("id", b.category_id).single(),
+    ]);
+    if (!profile?.email) continue;
+
+    const fresh = await notifyOnce(
+      b.user_id,
+      `budget_exceeded:${b.id}:${monthStr}`,
+      `Budget exceeded — ${cat?.name ?? "category"}`,
+      `You've spent over your ${cat?.name ?? "category"} budget this month.`,
+    );
+    if (!fresh) continue;
+
+    await sendBudgetExceededEmail({
+      email: profile.email,
+      fullName: profile.full_name,
+      category: cat?.name ?? "category",
+      spent,
+      budget: Number(b.amount),
+    });
+    budgetSent++;
+  }
+
+  // ---------- Low-points warnings (premium about to expire) ----------
+  const { data: lowUsers } = await supabase
+    .from("profiles")
+    .select("id, email, full_name, points")
+    .eq("lifetime", false)
+    .gt("points", 0)
+    .lte("points", 5);
+
+  for (const u of lowUsers ?? []) {
+    if (!u.email) continue;
+    const fresh = await notifyOnce(
+      u.id,
+      `low_points:${u.id}:${toISODate(today)}`,
+      `Premium expires in ${u.points} day${u.points === 1 ? "" : "s"}`,
+      `Top up to keep your premium features.`,
+    );
+    if (!fresh) continue;
+
+    await sendLowPointsEmail({
+      email: u.email,
+      fullName: u.full_name,
+      points: Number(u.points),
+    });
+    lowPointsSent++;
+  }
+
+  return NextResponse.json({
+    ok: true,
+    emiSent,
+    maturitySent,
+    budgetSent,
+    lowPointsSent,
+  });
 }

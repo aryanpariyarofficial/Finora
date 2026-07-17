@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { AppSidebar } from "@/components/app-sidebar";
 import { FreeBanner } from "@/components/free-banner";
 import { MobileNav } from "@/components/mobile-nav";
+import { NotificationBell } from "@/components/notification-bell";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { PointsPill } from "@/components/points-pill";
 import { PrefsSync } from "@/components/prefs-sync";
@@ -31,15 +32,25 @@ export default async function AppLayout({
   if (!user) redirect("/login");
 
   const cookieStore = await cookies();
-  const [entitlements, { data: profile }, accounts] = await Promise.all([
-    getEntitlements(),
-    supabase
-      .from("profiles")
-      .select("full_name, avatar_url, locale, calendar")
-      .eq("id", user.id)
-      .single(),
-    getAccounts(),
-  ]);
+  const [entitlements, { data: profile }, accounts, { data: notifications }] =
+    await Promise.all([
+      getEntitlements(),
+      supabase
+        .from("profiles")
+        .select("full_name, avatar_url, locale, calendar")
+        .eq("id", user.id)
+        .single(),
+      getAccounts(),
+      supabase
+        .from("notifications")
+        .select("id, title, body, read_at, created_at")
+        .order("created_at", { ascending: false })
+        .limit(20),
+    ]);
+
+  const unreadCount = (notifications ?? []).filter(
+    (n) => n.read_at == null,
+  ).length;
 
   const moneyAccounts = accounts.filter(
     (a) => a.kind === "asset" || a.kind === "liability",
@@ -79,6 +90,10 @@ export default async function AppLayout({
               <PointsPill
                 points={entitlements.points}
                 lifetime={entitlements.lifetime}
+              />
+              <NotificationBell
+                notifications={notifications ?? []}
+                unreadCount={unreadCount}
               />
               <LanguageSwitcher />
               <ThemeToggle />

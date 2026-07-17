@@ -231,6 +231,10 @@ export const en = {
     language: "Language",
     loggingIn: "Logging in…",
   },
+  notif: {
+    title: "Notifications",
+    empty: "You're all caught up.",
+  },
   onboard: {
     welcomeTitle: "Welcome to Finora 👋",
     welcomeBody:
@@ -597,6 +601,10 @@ export const ne: Dict = {
     comingSoon: "चाँडै आउँदैछ",
     language: "भाषा",
     loggingIn: "लग इन हुँदैछ…",
+  },
+  notif: {
+    title: "सूचनाहरू",
+    empty: "सबै हेरिसक्नुभयो।",
   },
   onboard: {
     welcomeTitle: "Finora मा स्वागत छ 👋",

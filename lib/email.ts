@@ -196,6 +196,48 @@ export async function sendEmiReminderEmail(opts: {
   });
 }
 
+export async function sendBudgetExceededEmail(opts: {
+  email: string;
+  fullName: string | null;
+  category: string;
+  spent: number;
+  budget: number;
+}) {
+  const name = opts.fullName?.split(" ")[0] ?? "there";
+  await sendEmail({
+    to: opts.email,
+    subject: `⚠️ Budget exceeded — ${opts.category}`,
+    html: shell(
+      `Hi ${esc(name)}, you've gone over budget`,
+      `<p>Your <b>${esc(opts.category)}</b> spending this month is
+       <b>${formatMoney(opts.spent)}</b>, over your budget of
+       ${formatMoney(opts.budget)}.</p>
+       <p>Open Finora to see where it went and adjust before month-end.</p>`,
+    ),
+  });
+}
+
+export async function sendLowPointsEmail(opts: {
+  email: string;
+  fullName: string | null;
+  points: number;
+}) {
+  const name = opts.fullName?.split(" ")[0] ?? "there";
+  await sendEmail({
+    to: opts.email,
+    subject: `🔔 Your Finora premium expires in ${opts.points} day${opts.points === 1 ? "" : "s"}`,
+    html: shell(
+      `Hi ${esc(name)}, top up to keep premium`,
+      `<p>You have <b>${opts.points} day${opts.points === 1 ? "" : "s"}</b> of
+       premium left. Top up to keep unlimited history, budgets, loans,
+       investments, reports and exports.</p>
+       <p>Your data is never deleted — but premium features lock when points
+       run out.</p>
+       ${whatsappLine}`,
+    ),
+  });
+}
+
 export async function sendMaturityReminderEmail(opts: {
   email: string;
   fullName: string | null;
