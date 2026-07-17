@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronRight, Languages, Palette, UserRound } from "lucide-react";
 import { DataExport } from "@/components/settings/data-export";
+import { PinSettings } from "@/components/settings/pin-settings";
 import {
   Card,
   CardContent,
@@ -56,6 +57,16 @@ export default async function SettingsPage() {
             <Palette className="size-4" /> Light / Dark — use the theme toggle
             in the top bar.
           </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{t.lock.title}</CardTitle>
+          <CardDescription>{t.lock.subtitle}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <PinSettings />
         </CardContent>
       </Card>
 

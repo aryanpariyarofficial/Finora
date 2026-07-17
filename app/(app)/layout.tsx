@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { AppLock } from "@/components/app-lock";
 import { AppSidebar } from "@/components/app-sidebar";
 import { FreeBanner } from "@/components/free-banner";
 import { MobileNav } from "@/components/mobile-nav";
@@ -67,6 +68,7 @@ export default async function AppLayout({
 
   return (
     <TooltipProvider>
+      <AppLock>
       <SidebarProvider>
         <AppSidebar
           userName={userName}
@@ -121,6 +123,7 @@ export default async function AppLayout({
           />
         </SidebarInset>
       </SidebarProvider>
+      </AppLock>
     </TooltipProvider>
   );
 }
