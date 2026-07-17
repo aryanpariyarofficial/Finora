@@ -7,29 +7,28 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { formatAppDate } from "@/lib/calendar";
 import { getAccounts, getLoans } from "@/lib/data";
 import { getEntitlements } from "@/lib/entitlements";
 import { formatMoney } from "@/lib/finance";
-import { getDict } from "@/lib/i18n/server";
+import { getCalendar, getDict, getLocale } from "@/lib/i18n/server";
 
 export const metadata = { title: "Loans" };
 
-function nextDueDate(startDate: string, paymentsCount: number) {
+function nextDueISO(startDate: string, paymentsCount: number) {
   const d = new Date(`${startDate}T00:00:00`);
   d.setMonth(d.getMonth() + paymentsCount + 1);
-  return d.toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
 export default async function LoansPage() {
-  const [t, ent, accounts, loans] = await Promise.all([
+  const [t, ent, accounts, loans, calendar, locale] = await Promise.all([
     getDict(),
     getEntitlements(),
     getAccounts(),
     getLoans(),
+    getCalendar(),
+    getLocale(),
   ]);
 
   const assetAccounts = accounts.filter((a) => a.kind === "asset");
@@ -139,7 +138,11 @@ export default async function LoansPage() {
                       <p className="font-semibold">
                         {closed
                           ? "—"
-                          : nextDueDate(loan.start_date, loan.payments_count)}
+                          : formatAppDate(
+                              nextDueISO(loan.start_date, loan.payments_count),
+                              calendar,
+                              locale,
+                            )}
                       </p>
                     </div>
                   </div>

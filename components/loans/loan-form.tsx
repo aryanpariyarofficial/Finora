@@ -28,6 +28,7 @@ import type { AccountBalance } from "@/lib/types";
 export function LoanForm({ accounts }: { accounts: AccountBalance[] }) {
   const t = useT();
   const [open, setOpen] = useState(false);
+  const [monthsPaid, setMonthsPaid] = useState(0);
   const [pending, startTransition] = useTransition();
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -50,7 +51,7 @@ export function LoanForm({ accounts }: { accounts: AccountBalance[] }) {
           <Plus /> {t.loans.add}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{t.loans.add}</DialogTitle>
         </DialogHeader>
@@ -113,20 +114,39 @@ export function LoanForm({ accounts }: { accounts: AccountBalance[] }) {
             </div>
           </div>
           <div className="space-y-2">
-            <Label>{t.loans.depositTo}</Label>
-            <Select name="deposit_account_id" required>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder={t.tx.chooseAccount} />
-              </SelectTrigger>
-              <SelectContent>
-                {accounts.map((a) => (
-                  <SelectItem key={a.id} value={a.id}>
-                    {a.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="months_paid">{t.loans.monthsPaid}</Label>
+            <Input
+              id="months_paid"
+              name="months_paid"
+              type="number"
+              min="0"
+              step="1"
+              value={monthsPaid}
+              onChange={(e) =>
+                setMonthsPaid(Math.max(0, parseInt(e.target.value, 10) || 0))
+              }
+            />
+            <p className="text-xs text-muted-foreground">
+              {t.loans.monthsPaidHint}
+            </p>
           </div>
+          {monthsPaid === 0 && (
+            <div className="space-y-2">
+              <Label>{t.loans.depositTo}</Label>
+              <Select name="deposit_account_id" required>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder={t.tx.chooseAccount} />
+                </SelectTrigger>
+                <SelectContent>
+                  {accounts.map((a) => (
+                    <SelectItem key={a.id} value={a.id}>
+                      {a.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <Button type="submit" className="w-full" disabled={pending}>
             {pending ? t.loans.creating : t.loans.create}
           </Button>

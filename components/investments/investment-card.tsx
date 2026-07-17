@@ -7,8 +7,8 @@ import {
   deleteInvestment,
   updateInvestmentValue,
 } from "@/lib/actions/investments";
-import { useT } from "@/components/locale-provider";
-import { formatDate, formatMoney } from "@/lib/finance";
+import { useFormatDate, useT } from "@/components/locale-provider";
+import { formatMoney } from "@/lib/finance";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,6 +32,7 @@ export function InvestmentCard({
   canEdit: boolean;
 }) {
   const t = useT();
+  const formatDate = useFormatDate();
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
 

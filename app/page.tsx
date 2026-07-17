@@ -238,6 +238,10 @@ const faqs = [
     q: "Can I use it on my phone?",
     a: "Yes — Finora is installable as an app. Open it in your browser, tap “Add to Home Screen”, and it works like a native app with the Finora icon.",
   },
+  {
+    q: "How does the referral program work?",
+    a: "Premium members get a personal invite link. When a friend signs up through it, you BOTH receive 30 points — a full month of premium, free. Your link lives on your Profile page.",
+  },
 ];
 
 export default function LandingPage() {
@@ -318,6 +322,18 @@ export default function LandingPage() {
               <p className="mt-1 text-xs text-muted-foreground">{s.small}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Referral strip */}
+      <section className="px-6 py-4">
+        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-2 rounded-xl border border-[oklch(0.63_0.21_355)]/30 bg-[oklch(0.63_0.21_355)]/5 px-5 py-3 text-center text-sm">
+          <span>🎁</span>
+          <span>
+            <b>Refer a friend, both get 1 month free.</b> Premium members get a
+            personal invite link — every friend who joins earns you both 30
+            days of premium.
+          </span>
         </div>
       </section>
 

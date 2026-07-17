@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Noto_Sans_Devanagari } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { LocaleProvider } from "@/components/locale-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { dictionaries } from "@/lib/i18n/dictionaries";
-import { getLocale } from "@/lib/i18n/server";
+import { getCalendar, getLocale } from "@/lib/i18n/server";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,6 +23,16 @@ const notoDevanagari = Noto_Sans_Devanagari({
   weight: ["400", "500", "600", "700"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fcfcfd" },
+    { media: "(prefers-color-scheme: dark)", color: "#14162e" },
+  ],
+};
+
 export const metadata: Metadata = {
   title: {
     default: "Finora — Your Personal Financial Command Center",
@@ -37,7 +47,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = await getLocale();
+  const [locale, calendar] = await Promise.all([getLocale(), getCalendar()]);
   const dict = dictionaries[locale];
 
   return (
@@ -53,7 +63,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <LocaleProvider dict={dict} locale={locale}>
+          <LocaleProvider dict={dict} locale={locale} calendar={calendar}>
             {children}
           </LocaleProvider>
           <Toaster richColors position="top-right" />

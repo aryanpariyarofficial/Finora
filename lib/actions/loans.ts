@@ -6,14 +6,23 @@ import { createClient } from "@/lib/supabase/server";
 import { getEntitlements } from "@/lib/entitlements";
 import { calculateEMI } from "@/lib/finance";
 
-const loanSchema = z.object({
-  lender: z.string().trim().min(1, "Lender is required").max(100),
-  principal: z.coerce.number().positive("Loan amount must be greater than zero"),
-  annual_interest_rate: z.coerce.number().min(0).max(100),
-  start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date"),
-  term_months: z.coerce.number().int().positive("Duration must be at least 1 month"),
-  deposit_account_id: z.string().uuid("Choose a deposit account"),
-});
+const loanSchema = z
+  .object({
+    lender: z.string().trim().min(1, "Lender is required").max(100),
+    principal: z.coerce.number().positive("Loan amount must be greater than zero"),
+    annual_interest_rate: z.coerce.number().min(0).max(100),
+    start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date"),
+    term_months: z.coerce.number().int().positive("Duration must be at least 1 month"),
+    months_paid: z.coerce.number().int().min(0).default(0),
+    // Required only for brand-new loans (months_paid = 0).
+    deposit_account_id: z.string().uuid().optional().or(z.literal("")),
+  })
+  .refine((v) => v.months_paid < v.term_months, {
+    message: "Months already paid must be less than the loan duration.",
+  })
+  .refine((v) => v.months_paid > 0 || !!v.deposit_account_id, {
+    message: "Choose a deposit account.",
+  });
 
 const paymentSchema = z.object({
   loan_id: z.string().uuid(),
@@ -70,30 +79,90 @@ export async function createLoan(
 
   // 2. Loan record with the calculated EMI.
   const emi = calculateEMI(v.principal, v.annual_interest_rate, v.term_months);
-  const { error: loanError } = await supabase.from("loans").insert({
-    user_id: user.id,
-    liability_account_id: account.id,
-    lender: v.lender,
-    principal: v.principal,
-    annual_interest_rate: v.annual_interest_rate,
-    start_date: v.start_date,
-    term_months: v.term_months,
-    emi_amount: Math.round(emi * 100) / 100,
-  });
+  const { data: loan, error: loanError } = await supabase
+    .from("loans")
+    .insert({
+      user_id: user.id,
+      liability_account_id: account.id,
+      lender: v.lender,
+      principal: v.principal,
+      annual_interest_rate: v.annual_interest_rate,
+      start_date: v.start_date,
+      term_months: v.term_months,
+      emi_amount: Math.round(emi * 100) / 100,
+    })
+    .select("id")
+    .single();
   if (loanError) return { error: loanError.message };
 
-  // 3. Disbursement: transfer from the loan liability into the chosen
-  // asset account (debit bank, credit loan) — the ledger stays balanced.
-  const { error: txError } = await supabase.from("transactions").insert({
-    user_id: user.id,
-    type: "transfer",
-    amount: v.principal,
-    occurred_on: v.start_date,
-    account_id: account.id,
-    counter_account_id: v.deposit_account_id,
-    description: `Loan disbursement — ${v.lender}`,
-  });
-  if (txError) return { error: txError.message };
+  if (v.months_paid === 0) {
+    // 3a. New loan: disbursement transfers the principal from the loan
+    // liability into the chosen asset account — the ledger stays balanced.
+    const { error: txError } = await supabase.from("transactions").insert({
+      user_id: user.id,
+      type: "transfer",
+      amount: v.principal,
+      occurred_on: v.start_date,
+      account_id: account.id,
+      counter_account_id: v.deposit_account_id,
+      description: `Loan disbursement — ${v.lender}`,
+    });
+    if (txError) return { error: txError.message };
+  } else {
+    // 3b. Existing loan: the money was received and spent long ago, so we
+    // don't touch today's accounts. Replay the amortization for the months
+    // already paid to get the correct outstanding balance and history,
+    // then book only that outstanding as a liability opening adjustment.
+    const monthlyRate = v.annual_interest_rate / 12 / 100;
+    let balance = v.principal;
+    const paidRows = [];
+
+    for (let m = 1; m <= v.months_paid; m++) {
+      const interest = balance * monthlyRate;
+      const principalPart = Math.min(emi - interest, balance);
+      balance -= principalPart;
+
+      const paidOn = new Date(`${v.start_date}T00:00:00`);
+      paidOn.setMonth(paidOn.getMonth() + m);
+      paidRows.push({
+        user_id: user.id,
+        loan_id: loan.id,
+        paid_on: `${paidOn.getFullYear()}-${String(paidOn.getMonth() + 1).padStart(2, "0")}-${String(paidOn.getDate()).padStart(2, "0")}`,
+        principal_component: Math.round(principalPart * 100) / 100,
+        interest_component: Math.round(interest * 100) / 100,
+      });
+    }
+
+    const { error: paymentsError } = await supabase
+      .from("loan_payments")
+      .insert(paidRows);
+    if (paymentsError) return { error: paymentsError.message };
+
+    const outstanding = Math.round(balance * 100) / 100;
+    if (outstanding > 0) {
+      const { data: equity } = await supabase
+        .from("accounts")
+        .select("id")
+        .eq("kind", "equity")
+        .eq("is_system", true)
+        .limit(1)
+        .single();
+      if (!equity) return { error: "Opening Balances account not found." };
+
+      // Credit the liability, debit equity: outstanding shows correctly
+      // without touching any money account.
+      const { error: adjError } = await supabase.from("transactions").insert({
+        user_id: user.id,
+        type: "adjustment",
+        amount: outstanding,
+        occurred_on: v.start_date,
+        account_id: account.id,
+        counter_account_id: equity.id,
+        description: `Existing loan opening balance — ${v.lender}`,
+      });
+      if (adjError) return { error: adjError.message };
+    }
+  }
 
   revalidatePath("/loans");
   revalidatePath("/dashboard");

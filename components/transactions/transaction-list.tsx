@@ -4,8 +4,8 @@ import { useTransition } from "react";
 import { toast } from "sonner";
 import { ArrowDownLeft, ArrowLeftRight, ArrowUpRight, Trash2 } from "lucide-react";
 import { deleteTransaction } from "@/lib/actions/transactions";
-import { formatDate, formatMoney } from "@/lib/finance";
-import { useT } from "@/components/locale-provider";
+import { formatMoney } from "@/lib/finance";
+import { useFormatDate, useT } from "@/components/locale-provider";
 import { PAYMENT_METHOD_LABELS, type TransactionWithNames } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -39,6 +39,7 @@ export function TransactionList({
   showDelete?: boolean;
 }) {
   const t = useT();
+  const formatDate = useFormatDate();
   const [pending, startTransition] = useTransition();
 
   if (transactions.length === 0) {

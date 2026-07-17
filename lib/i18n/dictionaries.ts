@@ -161,6 +161,24 @@ export const en = {
     save: "Save changes",
     saving: "Saving…",
     saved: "Profile updated",
+    language: "Default language",
+    calendar: "Default calendar",
+    calendarAd: "English (AD)",
+    calendarBs: "Bikram Sambat (BS)",
+    changePassword: "Change password",
+    newPassword: "New password",
+    confirmPassword: "Confirm new password",
+    passwordChanged: "Password changed",
+    passwordMismatch: "Passwords don't match.",
+    passwordTooShort: "Password must be at least 8 characters.",
+    referralTitle: "Refer & earn",
+    referralSubtitle:
+      "Share your link — when a friend signs up, you BOTH get 1 month of premium free.",
+    referralCopy: "Copy link",
+    referralCopied: "Link copied!",
+    referralCount: "Friends joined",
+    referralLocked:
+      "Referral rewards are for premium members. Upgrade to unlock your link.",
   },
   free: {
     banner:
@@ -222,6 +240,9 @@ export const en = {
     nextDue: "Next due",
     empty: "No loans yet.",
     closed: "Closed",
+    monthsPaid: "EMIs already paid (months)",
+    monthsPaidHint:
+      "Adding an old loan? Enter how many monthly EMIs you've already paid — Finora rebuilds the history and current outstanding automatically.",
   },
   invest: {
     title: "Investments",
@@ -441,6 +462,24 @@ export const ne: Dict = {
     save: "सेभ गर्नुहोस्",
     saving: "सेभ हुँदैछ…",
     saved: "प्रोफाइल अपडेट भयो",
+    language: "Default भाषा",
+    calendar: "Default पात्रो",
+    calendarAd: "अंग्रेजी (AD)",
+    calendarBs: "बिक्रम सम्वत (BS)",
+    changePassword: "पासवर्ड परिवर्तन",
+    newPassword: "नयाँ पासवर्ड",
+    confirmPassword: "नयाँ पासवर्ड पुष्टि",
+    passwordChanged: "पासवर्ड परिवर्तन भयो",
+    passwordMismatch: "पासवर्ड मिलेन।",
+    passwordTooShort: "पासवर्ड कम्तीमा ८ अक्षरको हुनुपर्छ।",
+    referralTitle: "सिफारिस गर्नुहोस् र कमाउनुहोस्",
+    referralSubtitle:
+      "आफ्नो link share गर्नुहोस् — साथीले sign up गर्दा दुवैले १ महिना premium निःशुल्क पाउनुहुन्छ।",
+    referralCopy: "Link copy गर्नुहोस्",
+    referralCopied: "Link copy भयो!",
+    referralCount: "जोडिएका साथीहरू",
+    referralLocked:
+      "Referral reward premium सदस्यका लागि मात्र हो। Link खोल्न upgrade गर्नुहोस्।",
   },
   free: {
     banner:
@@ -502,6 +541,9 @@ export const ne: Dict = {
     nextDue: "अर्को किस्ता",
     empty: "अहिलेसम्म कुनै ऋण छैन।",
     closed: "बन्द",
+    monthsPaid: "तिरिसकेका EMI (महिना)",
+    monthsPaidHint:
+      "पुरानो ऋण थप्दै हुनुहुन्छ? कति महिनाको EMI तिरिसक्नुभयो लेख्नुहोस् — Finora ले इतिहास र बाँकी रकम आफैं मिलाउँछ।",
   },
   invest: {
     title: "लगानी",

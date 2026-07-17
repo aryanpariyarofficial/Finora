@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 
 export type AuthState = { error?: string; success?: string } | null;
@@ -32,6 +33,7 @@ export async function signup(
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
   const fullName = String(formData.get("full_name") ?? "");
+  const referralCode = String(formData.get("ref") ?? "").trim();
 
   if (password.length < 8) {
     return { error: "Password must be at least 8 characters." };
@@ -40,7 +42,12 @@ export async function signup(
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { full_name: fullName } },
+    options: {
+      data: {
+        full_name: fullName,
+        ...(referralCode ? { referred_by_code: referralCode } : {}),
+      },
+    },
   });
 
   if (error) return { error: error.message };
@@ -62,8 +69,14 @@ export async function sendPasswordReset(
 ): Promise<AuthState> {
   const supabase = await createClient();
 
+  const headerList = await headers();
+  const origin =
+    headerList.get("origin") ??
+    `https://${headerList.get("host") ?? "localhost:3000"}`;
+
   const { error } = await supabase.auth.resetPasswordForEmail(
     String(formData.get("email") ?? ""),
+    { redirectTo: `${origin}/auth/callback?next=/reset-password` },
   );
 
   if (error) return { error: error.message };

@@ -83,7 +83,7 @@ export function TransactionForm({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{transaction ? t.tx.edit : t.tx.add}</DialogTitle>
         </DialogHeader>

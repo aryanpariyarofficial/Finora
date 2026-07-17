@@ -49,7 +49,7 @@ export function InvestmentForm() {
           <Plus /> {t.invest.add}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{t.invest.add}</DialogTitle>
         </DialogHeader>

@@ -22,12 +22,16 @@ export function ProfileDetailsForm({
   currency,
   bio,
   phone,
+  locale,
+  calendar,
 }: {
   fullName: string;
   email: string;
   currency: string;
   bio: string;
   phone: string;
+  locale: string;
+  calendar: string;
 }) {
   const t = useT();
   const [pending, startTransition] = useTransition();
@@ -86,6 +90,32 @@ export function ProfileDetailsForm({
             <SelectItem value="INR">INR — Indian Rupee</SelectItem>
           </SelectContent>
         </Select>
+      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label>{t.profile.language}</Label>
+          <Select name="locale" defaultValue={locale}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="en">English</SelectItem>
+              <SelectItem value="ne">नेपाली</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label>{t.profile.calendar}</Label>
+          <Select name="calendar" defaultValue={calendar}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ad">{t.profile.calendarAd}</SelectItem>
+              <SelectItem value="bs">{t.profile.calendarBs}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       <Button type="submit" disabled={pending}>
         {pending ? t.profile.saving : t.profile.save}
