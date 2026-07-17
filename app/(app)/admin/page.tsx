@@ -1,7 +1,16 @@
 import { redirect } from "next/navigation";
-import { Infinity as InfinityIcon } from "lucide-react";
+import {
+  Infinity as InfinityIcon,
+  Clock,
+  Crown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import { AdjustPoints } from "@/components/admin/adjust-points";
 import { RequestActions } from "@/components/admin/request-actions";
+import { StatCard } from "@/components/dashboard/stat-card";
+import { PLANS } from "@/lib/billing";
+import { formatMoney } from "@/lib/finance";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -30,23 +39,76 @@ const PLAN_LABEL: Record<string, string> = {
   lifetime: "Lifetime",
 };
 
+/** Count profiles created within the last `days` days. */
+function countRecentSignups(
+  users: { created_at: string }[],
+  days: number,
+): number {
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  return users.filter((u) => new Date(u.created_at).getTime() > cutoff).length;
+}
+
 export default async function AdminPage() {
   const ent = await getEntitlements();
   if (!ent.isSuperAdmin) redirect("/dashboard");
 
   const supabase = await createClient();
-  const [{ data: requests }, { data: users }] = await Promise.all([
-    supabase
-      .from("payment_requests")
-      .select("*")
-      .eq("status", "pending")
-      .order("created_at", { ascending: true }),
-    supabase
-      .from("profiles")
-      .select("id, full_name, email, phone, plan, points, lifetime, role, created_at")
-      .order("created_at", { ascending: false })
-      .limit(200),
-  ]);
+  const [{ data: requests }, { data: users }, { data: approved }] =
+    await Promise.all([
+      supabase
+        .from("payment_requests")
+        .select("*")
+        .eq("status", "pending")
+        .order("created_at", { ascending: true }),
+      supabase
+        .from("profiles")
+        .select("id, full_name, email, phone, plan, points, lifetime, role, created_at")
+        .order("created_at", { ascending: false })
+        .limit(500),
+      supabase
+        .from("payment_requests")
+        .select("plan")
+        .eq("status", "approved"),
+    ]);
+
+  // ----- analytics -----
+  const priceByPlan = Object.fromEntries(
+    PLANS.map((p) => [p.id, p.price ?? 0]),
+  ) as Record<string, number>;
+  const revenue = (approved ?? []).reduce(
+    (acc, r) => acc + (priceByPlan[r.plan] ?? 0),
+    0,
+  );
+
+  const allUsers = users ?? [];
+  const totalUsers = allUsers.length;
+  const premiumUsers = allUsers.filter(
+    (u) => u.lifetime || u.points > 0,
+  ).length;
+  const conversion =
+    totalUsers > 0 ? Math.round((premiumUsers / totalUsers) * 100) : 0;
+
+  const newUsers = countRecentSignups(allUsers, 30);
+
+  const planCounts: Record<string, number> = {
+    free: 0,
+    monthly: 0,
+    half_yearly: 0,
+    yearly: 0,
+    lifetime: 0,
+  };
+  for (const u of allUsers) {
+    const key = u.lifetime ? "lifetime" : u.points > 0 ? u.plan : "free";
+    planCounts[key] = (planCounts[key] ?? 0) + 1;
+  }
+
+  const PLAN_NAMES: Record<string, string> = {
+    free: "Free",
+    monthly: "Monthly",
+    half_yearly: "6 Months",
+    yearly: "1 Year",
+    lifetime: "Lifetime",
+  };
 
   return (
     <>
@@ -57,6 +119,54 @@ export default async function AdminPage() {
           the plan&apos;s points (30 / 180 / 365 / lifetime).
         </p>
       </div>
+
+      {/* Analytics */}
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <StatCard
+          title="Total revenue"
+          value={formatMoney(revenue)}
+          hint={`${approved?.length ?? 0} payments`}
+          icon={TrendingUp}
+          tone="positive"
+        />
+        <StatCard
+          title="Total users"
+          value={String(totalUsers)}
+          hint={`+${newUsers} in 30 days`}
+          icon={Users}
+        />
+        <StatCard
+          title="Premium users"
+          value={String(premiumUsers)}
+          hint={`${conversion}% conversion`}
+          icon={Crown}
+          tone="positive"
+        />
+        <StatCard
+          title="Pending requests"
+          value={String(requests?.length ?? 0)}
+          hint={`+${newUsers} new signups`}
+          icon={Clock}
+        />
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Plan breakdown</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+            {Object.entries(planCounts).map(([plan, count]) => (
+              <div key={plan} className="rounded-lg border p-3 text-center">
+                <p className="text-2xl font-bold tabular-nums">{count}</p>
+                <p className="text-xs text-muted-foreground">
+                  {PLAN_NAMES[plan]}
+                </p>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
