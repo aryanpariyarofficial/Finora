@@ -1,6 +1,10 @@
 import { Suspense } from "react";
 import { ArrowDownLeft, ArrowUpRight, Hash, Lock, PiggyBank } from "lucide-react";
-import { CashflowChart } from "@/components/dashboard/lazy-charts";
+import {
+  CashflowChart,
+  CategoryDonut,
+  SavingsTrend,
+} from "@/components/dashboard/lazy-charts";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { PeriodPicker } from "@/components/reports/period-picker";
 import { ReportExport } from "@/components/reports/report-export";
@@ -162,12 +166,30 @@ export default async function ReportsPage({
       </div>
 
       {report.monthly.length > 1 && (
-        <CashflowChart
-          data={report.monthly}
-          title={t.reports.trend}
-          description={periodLabel}
-        />
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <CashflowChart
+            data={report.monthly}
+            title={t.reports.trend}
+            description={periodLabel}
+          />
+          <SavingsTrend data={report.monthly} />
+        </div>
       )}
+
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <CategoryDonut
+          data={report.expenseByCategory}
+          title={t.reports.expenseByCategory}
+          subtitle={periodLabel}
+          emptyLabel={t.reports.noData}
+        />
+        <CategoryDonut
+          data={report.incomeByCategory}
+          title={t.reports.incomeByCategory}
+          subtitle={periodLabel}
+          emptyLabel={t.reports.noData}
+        />
+      </div>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <CategoryTable

@@ -94,6 +94,7 @@ export default async function LoansPage() {
                       principal={loan.principal}
                       ratePct={loan.annual_interest_rate}
                       months={loan.term_months}
+                      emiAmount={loan.emi_amount}
                     />
                     {ent.isPremium && !closed && (
                       <LoanPaymentForm

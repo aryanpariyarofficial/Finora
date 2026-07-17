@@ -42,7 +42,17 @@ function fold(data: CategoryTotal[]) {
   ];
 }
 
-export function CategoryDonut({ data }: { data: CategoryTotal[] }) {
+export function CategoryDonut({
+  data,
+  title,
+  subtitle,
+  emptyLabel,
+}: {
+  data: CategoryTotal[];
+  title?: string;
+  subtitle?: string;
+  emptyLabel?: string;
+}) {
   const t = useT();
   const folded = fold(data);
   const total = folded.reduce((acc, r) => acc + r.total, 0);
@@ -50,13 +60,13 @@ export function CategoryDonut({ data }: { data: CategoryTotal[] }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t.dash.expenseCategories}</CardTitle>
-        <CardDescription>{t.dash.thisMonth}</CardDescription>
+        <CardTitle>{title ?? t.dash.expenseCategories}</CardTitle>
+        <CardDescription>{subtitle ?? t.dash.thisMonth}</CardDescription>
       </CardHeader>
       <CardContent>
         {folded.length === 0 ? (
           <p className="flex h-64 items-center justify-center text-sm text-muted-foreground">
-            {t.dash.noExpenses}
+            {emptyLabel ?? t.dash.noExpenses}
           </p>
         ) : (
           <div className="flex flex-col items-center gap-4 sm:flex-row">

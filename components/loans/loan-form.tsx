@@ -112,6 +112,21 @@ export function LoanForm({ accounts }: { accounts: AccountBalance[] }) {
             />
           </div>
           <div className="space-y-2">
+            <Label htmlFor="emi_amount">{t.loans.emiKnown}</Label>
+            <Input
+              id="emi_amount"
+              name="emi_amount"
+              type="number"
+              inputMode="decimal"
+              step="0.01"
+              min="0"
+              placeholder="15,000"
+            />
+            <p className="text-xs text-muted-foreground">
+              {t.loans.emiKnownHint}
+            </p>
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="months_paid">{t.loans.monthsPaid}</Label>
             <Input
               id="months_paid"

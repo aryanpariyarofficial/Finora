@@ -19,3 +19,8 @@ export const CategoryDonut = dynamic(
   () => import("./category-donut").then((m) => m.CategoryDonut),
   { ssr: false, loading: chartFallback },
 );
+
+export const SavingsTrend = dynamic(
+  () => import("../reports/savings-trend").then((m) => m.SavingsTrend),
+  { ssr: false, loading: chartFallback },
+);

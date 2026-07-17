@@ -33,13 +33,21 @@ function buildSchedule(
   principal: number,
   ratePct: number,
   months: number,
+  emiOverride?: number | null,
 ): ScheduleRow[] {
-  const emi = calculateEMI(principal, ratePct, months);
+  const emi =
+    emiOverride && emiOverride > 0
+      ? emiOverride
+      : calculateEMI(principal, ratePct, months);
   const monthlyRate = ratePct / 12 / 100;
   const rows: ScheduleRow[] = [];
   let balance = principal;
 
-  for (let m = 1; m <= months && balance > 0.005; m++) {
+  // A custom EMI could run longer/shorter than the nominal term; cap the
+  // schedule so it always terminates.
+  const maxRows = Math.max(months, 600);
+
+  for (let m = 1; m <= maxRows && balance > 0.005; m++) {
     const interest = balance * monthlyRate;
     const principalPart = Math.min(emi - interest, balance);
     balance -= principalPart;
@@ -59,15 +67,19 @@ export function AmortizationDialog({
   principal,
   ratePct,
   months,
+  emiAmount,
 }: {
   lender: string;
   principal: number;
   ratePct: number;
   months: number;
+  emiAmount?: number | null;
 }) {
   const t = useT();
   const [open, setOpen] = useState(false);
-  const rows = open ? buildSchedule(principal, ratePct, months) : [];
+  const rows = open
+    ? buildSchedule(principal, ratePct, months, emiAmount)
+    : [];
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

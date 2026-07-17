@@ -228,6 +228,9 @@ export const en = {
     term: "Duration (months)",
     depositTo: "Deposit to account",
     emi: "Monthly EMI",
+    emiKnown: "Monthly EMI (optional)",
+    emiKnownHint:
+      "Already know your EMI from the bank? Enter it and Finora uses it as-is. Leave blank and we calculate it from the amount, rate and duration.",
     outstanding: "Outstanding",
     create: "Create loan",
     creating: "Creating…",
@@ -538,6 +541,9 @@ export const ne: Dict = {
     term: "अवधि (महिना)",
     depositTo: "जम्मा हुने खाता",
     emi: "मासिक EMI",
+    emiKnown: "मासिक EMI (वैकल्पिक)",
+    emiKnownHint:
+      "बैंकबाट EMI थाहा छ? यहाँ लेख्नुहोस् — Finora ले त्यही प्रयोग गर्छ। खाली छोड्दा रकम, ब्याज र अवधिबाट आफैं हिसाब गर्छ।",
     outstanding: "बाँकी रकम",
     create: "ऋण बनाउनुहोस्",
     creating: "बन्दैछ…",

@@ -13,6 +13,7 @@ const loanSchema = z
     annual_interest_rate: z.coerce.number().min(0).max(100),
     start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date"),
     term_months: z.coerce.number().int().positive("Duration must be at least 1 month"),
+    emi_amount: z.coerce.number().positive().optional().or(z.literal("")),
     months_paid: z.coerce.number().int().min(0).default(0),
     // Required only for brand-new loans (months_paid = 0).
     deposit_account_id: z.string().uuid().optional().or(z.literal("")),
@@ -77,8 +78,12 @@ export async function createLoan(
     };
   }
 
-  // 2. Loan record with the calculated EMI.
-  const emi = calculateEMI(v.principal, v.annual_interest_rate, v.term_months);
+  // 2. Loan record. Use the bank-provided EMI when given; otherwise
+  // calculate it from principal / rate / term.
+  const emi =
+    typeof v.emi_amount === "number" && v.emi_amount > 0
+      ? v.emi_amount
+      : calculateEMI(v.principal, v.annual_interest_rate, v.term_months);
   const { data: loan, error: loanError } = await supabase
     .from("loans")
     .insert({
