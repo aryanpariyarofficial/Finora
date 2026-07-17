@@ -102,6 +102,7 @@ export default async function AdminPage() {
                     requestId={r.id}
                     plan={r.plan}
                     screenshotPath={r.screenshot_path}
+                    requesterName={r.full_name}
                   />
                 </li>
               ))}
