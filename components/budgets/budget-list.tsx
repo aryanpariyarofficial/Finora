@@ -1,9 +1,9 @@
 "use client";
 
 import { deleteBudget } from "@/lib/actions/budgets";
-import { formatMoney } from "@/lib/finance";
 import { useT } from "@/components/locale-provider";
 import { ConfirmDelete } from "@/components/confirm-delete";
+import { Money } from "@/components/money";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -67,9 +67,9 @@ export function BudgetList({
                     over ? "text-destructive" : "text-foreground",
                   )}
                 >
-                  {formatMoney(b.spent)}
+                  <Money value={b.spent} />
                 </span>{" "}
-                / {formatMoney(b.amount)} · {pct}%
+                / <Money value={b.amount} /> · {pct}%
               </p>
             </CardContent>
           </Card>

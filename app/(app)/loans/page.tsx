@@ -10,7 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { formatAppDate } from "@/lib/calendar";
 import { getAccounts, getLoans } from "@/lib/data";
 import { getEntitlements } from "@/lib/entitlements";
-import { formatMoney } from "@/lib/finance";
+import { Money } from "@/components/money";
 import { getCalendar, getDict, getLocale } from "@/lib/i18n/server";
 
 export const metadata = { title: "Loans" };
@@ -83,7 +83,7 @@ export default async function LoansPage() {
                       )}
                     </CardTitle>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      {formatMoney(loan.principal)} ·{" "}
+                      <Money value={loan.principal} /> ·{" "}
                       {loan.annual_interest_rate}% · {loan.term_months}{" "}
                       {t.loans.month.toLowerCase()}
                     </p>
@@ -113,15 +113,17 @@ export default async function LoansPage() {
                         {t.loans.outstanding}
                       </p>
                       <p className="font-semibold tabular-nums">
-                        {formatMoney(loan.outstanding)}
+                        <Money value={loan.outstanding} />
                       </p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t.loans.emi}</p>
                       <p className="font-semibold tabular-nums">
-                        {loan.emi_amount != null
-                          ? formatMoney(loan.emi_amount)
-                          : "—"}
+                        {loan.emi_amount != null ? (
+                          <Money value={loan.emi_amount} />
+                        ) : (
+                          "—"
+                        )}
                       </p>
                     </div>
                     <div>
@@ -129,7 +131,7 @@ export default async function LoansPage() {
                         {t.loans.interestPaid}
                       </p>
                       <p className="font-semibold tabular-nums">
-                        {formatMoney(loan.interest_paid)}
+                        <Money value={loan.interest_paid} />
                       </p>
                     </div>
                     <div>
@@ -150,8 +152,8 @@ export default async function LoansPage() {
                   <div className="space-y-1.5">
                     <Progress value={paidPct} />
                     <p className="text-xs text-muted-foreground">
-                      {t.loans.principalPaid}: {formatMoney(loan.principal_paid)}{" "}
-                      / {formatMoney(loan.principal)} · {paidPct}%
+                      {t.loans.principalPaid}: <Money value={loan.principal_paid} />{" "}
+                      / <Money value={loan.principal} /> · {paidPct}%
                     </p>
                   </div>
                 </CardContent>

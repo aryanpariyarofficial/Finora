@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { setAccountBalance } from "@/lib/actions/accounts";
 import { formatMoney } from "@/lib/finance";
+import { Money } from "@/components/money";
 import { useT } from "@/components/locale-provider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -71,7 +72,7 @@ export function AccountCard({ account }: { account: AccountBalance }) {
             </div>
             <div className="text-right">
               <p className="text-lg font-bold tabular-nums">
-                {formatMoney(balance)}
+                <Money value={balance} />
               </p>
               <p className="flex items-center justify-end gap-1 text-[11px] text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
                 <Pencil className="size-3" /> {t.accounts.tapToSet}

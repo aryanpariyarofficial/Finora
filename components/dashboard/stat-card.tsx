@@ -10,8 +10,8 @@ export function StatCard({
   tone = "default",
 }: {
   title: string;
-  value: string;
-  hint?: string;
+  value: React.ReactNode;
+  hint?: React.ReactNode;
   icon: LucideIcon;
   tone?: "default" | "positive" | "negative";
 }) {

@@ -8,8 +8,8 @@ import {
   updateInvestmentValue,
 } from "@/lib/actions/investments";
 import { useFormatDate, useT } from "@/components/locale-provider";
-import { formatMoney } from "@/lib/finance";
 import { ConfirmDelete } from "@/components/confirm-delete";
+import { Money } from "@/components/money";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -119,13 +119,13 @@ export function InvestmentCard({
           <div>
             <p className="text-muted-foreground">{t.invest.invested}</p>
             <p className="font-semibold tabular-nums">
-              {formatMoney(investment.invested_amount)}
+              <Money value={investment.invested_amount} />
             </p>
           </div>
           <div>
             <p className="text-muted-foreground">{t.invest.currentValue}</p>
             <p className="font-semibold tabular-nums">
-              {formatMoney(investment.current_value)}
+              <Money value={investment.current_value} />
             </p>
           </div>
           <div>
@@ -138,7 +138,7 @@ export function InvestmentCard({
                 gain ? "text-[var(--success)]" : "text-destructive",
               )}
             >
-              {formatMoney(profit, { signed: true })}
+              <Money value={profit} signed />
             </p>
           </div>
           <div>

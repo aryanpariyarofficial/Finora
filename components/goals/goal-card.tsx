@@ -5,8 +5,8 @@ import { toast } from "sonner";
 import { PiggyBank, Plus } from "lucide-react";
 import { addContribution, deleteGoal } from "@/lib/actions/goals";
 import { useFormatDate, useT } from "@/components/locale-provider";
-import { formatMoney } from "@/lib/finance";
 import { ConfirmDelete } from "@/components/confirm-delete";
+import { Money } from "@/components/money";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -84,10 +84,10 @@ export function GoalCard({ goal }: { goal: Goal }) {
 
         <div className="flex items-center justify-between text-sm">
           <span className="font-semibold tabular-nums">
-            {formatMoney(goal.saved_amount)}
+            <Money value={goal.saved_amount} />
             <span className="font-normal text-muted-foreground">
               {" "}
-              {t.goals.of} {formatMoney(goal.target_amount)}
+              {t.goals.of} <Money value={goal.target_amount} />
             </span>
           </span>
           {achieved ? (
@@ -96,7 +96,7 @@ export function GoalCard({ goal }: { goal: Goal }) {
             </Badge>
           ) : (
             <span className="text-xs text-muted-foreground">
-              {formatMoney(remaining)} {t.goals.left}
+              <Money value={remaining} /> {t.goals.left}
             </span>
           )}
         </div>

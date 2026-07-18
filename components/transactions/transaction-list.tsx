@@ -2,9 +2,9 @@
 
 import { ArrowDownLeft, ArrowLeftRight, ArrowUpRight } from "lucide-react";
 import { deleteTransaction } from "@/lib/actions/transactions";
-import { formatMoney } from "@/lib/finance";
 import { useFormatDate, useT } from "@/components/locale-provider";
 import { ConfirmDelete } from "@/components/confirm-delete";
+import { Money } from "@/components/money";
 import { PAYMENT_METHOD_LABELS, type TransactionWithNames } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -85,10 +85,10 @@ export function TransactionList({
                 tx.type === "expense" && "text-destructive",
               )}
             >
-              {formatMoney(
-                tx.type === "expense" ? -tx.amount : tx.amount,
-                { signed: tx.type === "income" },
-              )}
+              <Money
+                value={tx.type === "expense" ? -tx.amount : tx.amount}
+                signed={tx.type === "income"}
+              />
             </span>
             {showDelete && (
               <ConfirmDelete

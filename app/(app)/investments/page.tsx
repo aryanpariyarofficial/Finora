@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getInvestments } from "@/lib/data";
 import { getEntitlements } from "@/lib/entitlements";
-import { formatMoney } from "@/lib/finance";
+import { Money } from "@/components/money";
 import { getDict } from "@/lib/i18n/server";
 
 export const metadata = { title: "Investments" };
@@ -49,13 +49,13 @@ export default async function InvestmentsPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <StatCard
             title={t.invest.totalInvested}
-            value={formatMoney(totalInvested)}
+            value={<Money value={totalInvested} />}
             icon={Wallet2}
           />
           <StatCard
             title={t.invest.totalValue}
-            value={formatMoney(totalValue)}
-            hint={formatMoney(totalValue - totalInvested, { signed: true })}
+            value={<Money value={totalValue} />}
+            hint={<Money value={totalValue - totalInvested} signed />}
             icon={TrendingUp}
             tone={totalValue >= totalInvested ? "positive" : "negative"}
           />

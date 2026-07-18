@@ -29,7 +29,8 @@ import {
   runDueRecurring,
 } from "@/lib/data";
 import { getEntitlements } from "@/lib/entitlements";
-import { formatMoney, monthStart } from "@/lib/finance";
+import { monthStart } from "@/lib/finance";
+import { Money } from "@/components/money";
 import { getDict } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 
@@ -126,27 +127,35 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title={t.dash.currentBalance}
-          value={formatMoney(currentBalance)}
+          value={<Money value={currentBalance} />}
           hint={`${moneyAccounts.length} ${t.dash.accounts}`}
           icon={Wallet}
         />
         <StatCard
           title={t.dash.monthlyIncome}
-          value={formatMoney(summary.income)}
-          hint={`${t.dash.today}: ${formatMoney(summary.todayIncome)}`}
+          value={<Money value={summary.income} />}
+          hint={
+            <>
+              {t.dash.today}: <Money value={summary.todayIncome} />
+            </>
+          }
           icon={ArrowDownLeft}
           tone="positive"
         />
         <StatCard
           title={t.dash.monthlyExpense}
-          value={formatMoney(summary.expense)}
-          hint={`${t.dash.today}: ${formatMoney(summary.todayExpense)}`}
+          value={<Money value={summary.expense} />}
+          hint={
+            <>
+              {t.dash.today}: <Money value={summary.todayExpense} />
+            </>
+          }
           icon={ArrowUpRight}
           tone="negative"
         />
         <StatCard
           title={t.dash.netThisMonth}
-          value={formatMoney(net, { signed: true })}
+          value={<Money value={net} signed />}
           hint={
             summary.income > 0
               ? `${t.dash.savingsRate} ${savingsRate}%`
@@ -161,12 +170,12 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <StatCard
             title={t.invest.totalValue}
-            value={formatMoney(investmentValue)}
+            value={<Money value={investmentValue} />}
             icon={TrendingUp}
           />
           <StatCard
             title={t.loans.outstanding}
-            value={formatMoney(totalLoanOutstanding)}
+            value={<Money value={totalLoanOutstanding} />}
             icon={Landmark}
             tone={totalLoanOutstanding > 0 ? "negative" : "default"}
           />

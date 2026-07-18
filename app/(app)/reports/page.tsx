@@ -17,7 +17,8 @@ import {
 } from "@/components/ui/card";
 import { getNetWorthTimeline, getReportData, type CategoryTotal } from "@/lib/data";
 import { getEntitlements } from "@/lib/entitlements";
-import { formatMoney, monthStart, todayISO } from "@/lib/finance";
+import { monthStart, todayISO } from "@/lib/finance";
+import { Money } from "@/components/money";
 import { getDict } from "@/lib/i18n/server";
 
 export const metadata = { title: "Reports" };
@@ -79,7 +80,7 @@ function CategoryTable({
               >
                 <span>{row.category}</span>
                 <span className="font-medium tabular-nums">
-                  {formatMoney(row.total)}
+                  <Money value={row.total} />
                   <span className="ml-2 text-xs text-muted-foreground">
                     {total > 0 ? Math.round((row.total / total) * 100) : 0}%
                   </span>
@@ -144,19 +145,19 @@ export default async function ReportsPage({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title={t.reports.income}
-          value={formatMoney(report.income)}
+          value={<Money value={report.income} />}
           icon={ArrowDownLeft}
           tone="positive"
         />
         <StatCard
           title={t.reports.expense}
-          value={formatMoney(report.expense)}
+          value={<Money value={report.expense} />}
           icon={ArrowUpRight}
           tone="negative"
         />
         <StatCard
           title={t.reports.net}
-          value={formatMoney(net, { signed: true })}
+          value={<Money value={net} signed />}
           icon={PiggyBank}
           tone={net >= 0 ? "positive" : "negative"}
         />

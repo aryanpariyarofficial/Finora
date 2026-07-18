@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FREE_TRANSACTION_LIMIT } from "@/lib/billing";
 import { getAccounts, getTransactions } from "@/lib/data";
 import { getEntitlements } from "@/lib/entitlements";
-import { formatMoney } from "@/lib/finance";
+import { Money } from "@/components/money";
 import { getDict } from "@/lib/i18n/server";
 import { PAYMENT_METHOD_LABELS } from "@/lib/types";
 
@@ -78,7 +78,8 @@ export default async function TransactionsPage({
           <h1 className="text-2xl font-bold tracking-tight">{t.tx.title}</h1>
           <p className="text-sm text-muted-foreground">
             {transactions.length} {t.tx.shown} · {t.tx.in}{" "}
-            {formatMoney(totalIncome)} · {t.tx.out} {formatMoney(totalExpense)}
+            <Money value={totalIncome} /> · {t.tx.out}{" "}
+            <Money value={totalExpense} />
           </p>
         </div>
         <div className="flex items-center gap-2">
