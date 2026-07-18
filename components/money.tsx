@@ -50,7 +50,7 @@ export function Money({
   if (hidden) {
     return (
       <span className="select-none tracking-wider" aria-label="hidden">
-        ••••••
+        Rs. xxx
       </span>
     );
   }
