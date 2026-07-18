@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import * as Sentry from "@sentry/nextjs";
 import { ErrorView } from "@/components/error-view";
 
 export default function RootError({
@@ -12,6 +13,7 @@ export default function RootError({
 }) {
   useEffect(() => {
     console.error(error);
+    Sentry.captureException(error);
   }, [error]);
 
   return <ErrorView reset={reset} />;
