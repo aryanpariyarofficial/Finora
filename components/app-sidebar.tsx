@@ -31,6 +31,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -47,6 +48,12 @@ export function AppSidebar({
 }) {
   const pathname = usePathname();
   const t = useT();
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  // On mobile the sidebar is a sheet — close it after tapping a link.
+  const closeOnMobile = () => {
+    if (isMobile) setOpenMobile(false);
+  };
 
   const mainNav = [
     { title: t.nav.dashboard, href: "/dashboard", icon: LayoutDashboard },
@@ -71,7 +78,7 @@ export function AppSidebar({
           isActive={pathname.startsWith(item.href)}
           tooltip={item.title}
         >
-          <Link href={item.href}>
+          <Link href={item.href} onClick={closeOnMobile}>
             <item.icon />
             <span>{item.title}</span>
           </Link>
@@ -82,7 +89,11 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <Link href="/dashboard" className="flex items-center gap-2.5 px-1 py-1">
+        <Link
+          href="/dashboard"
+          onClick={closeOnMobile}
+          className="flex items-center gap-2.5 px-1 py-1"
+        >
           <LogoMark className="size-7 shrink-0" />
           <span className="text-lg font-bold tracking-tight group-data-[collapsible=icon]:hidden">
             Finora
@@ -113,7 +124,7 @@ export function AppSidebar({
               isActive={pathname.startsWith("/upgrade")}
               tooltip={t.nav.upgrade}
             >
-              <Link href="/upgrade">
+              <Link href="/upgrade" onClick={closeOnMobile}>
                 <Sparkles className="text-[oklch(0.63_0.21_355)]" />
                 <span>{t.nav.upgrade}</span>
               </Link>
@@ -126,7 +137,7 @@ export function AppSidebar({
                 isActive={pathname.startsWith("/admin")}
                 tooltip={t.nav.admin}
               >
-                <Link href="/admin">
+                <Link href="/admin" onClick={closeOnMobile}>
                   <ShieldCheck />
                   <span>{t.nav.admin}</span>
                 </Link>
@@ -139,7 +150,7 @@ export function AppSidebar({
               isActive={pathname.startsWith("/settings")}
               tooltip={t.nav.settings}
             >
-              <Link href="/settings">
+              <Link href="/settings" onClick={closeOnMobile}>
                 <Settings />
                 <span>{t.nav.settings}</span>
               </Link>
@@ -147,7 +158,11 @@ export function AppSidebar({
           </SidebarMenuItem>
           <SidebarMenuItem>
             <div className="flex items-center gap-2 px-2 py-1.5 group-data-[collapsible=icon]:px-0">
-              <Link href="/profile" className="flex min-w-0 flex-1 items-center gap-2">
+              <Link
+                href="/profile"
+                onClick={closeOnMobile}
+                className="flex min-w-0 flex-1 items-center gap-2"
+              >
                 <Avatar className="size-7">
                   {avatarUrl && <AvatarImage src={avatarUrl} alt={userName} />}
                   <AvatarFallback className="text-xs">
