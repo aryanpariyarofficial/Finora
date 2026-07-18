@@ -259,6 +259,21 @@ export const en = {
     title: "Notifications",
     empty: "You're all caught up.",
   },
+  confirm: {
+    title: "Are you sure?",
+    description: "This can't be undone.",
+    delete: "Delete",
+    deleting: "Deleting…",
+    cancel: "Cancel",
+  },
+  errors: {
+    title: "Something went wrong",
+    body: "An unexpected error occurred. Please try again.",
+    retry: "Try again",
+    home: "Back to dashboard",
+    notFoundTitle: "Page not found",
+    notFoundBody: "The page you're looking for doesn't exist.",
+  },
   dataExport: {
     title: "Backup & export",
     subtitle: "Download all your Finora data anytime.",
@@ -679,6 +694,21 @@ export const ne: Dict = {
   notif: {
     title: "सूचनाहरू",
     empty: "सबै हेरिसक्नुभयो।",
+  },
+  confirm: {
+    title: "पक्का हो?",
+    description: "यो फिर्ता गर्न मिल्दैन।",
+    delete: "मेटाउनुहोस्",
+    deleting: "मेटिँदै…",
+    cancel: "रद्द गर्नुहोस्",
+  },
+  errors: {
+    title: "केही गडबड भयो",
+    body: "अनपेक्षित त्रुटि आयो। फेरि प्रयास गर्नुहोस्।",
+    retry: "फेरि प्रयास गर्नुहोस्",
+    home: "ड्यासबोर्डमा फर्कनुहोस्",
+    notFoundTitle: "पेज भेटिएन",
+    notFoundBody: "तपाईंले खोज्नुभएको पेज अवस्थित छैन।",
   },
   dataExport: {
     title: "ब्याकअप र एक्सपोर्ट",

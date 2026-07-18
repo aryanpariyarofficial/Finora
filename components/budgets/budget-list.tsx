@@ -1,13 +1,10 @@
 "use client";
 
-import { useTransition } from "react";
-import { toast } from "sonner";
-import { Trash2 } from "lucide-react";
 import { deleteBudget } from "@/lib/actions/budgets";
 import { formatMoney } from "@/lib/finance";
 import { useT } from "@/components/locale-provider";
+import { ConfirmDelete } from "@/components/confirm-delete";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -21,7 +18,6 @@ export function BudgetList({
   canEdit: boolean;
 }) {
   const t = useT();
-  const [pending, startTransition] = useTransition();
 
   if (budgets.length === 0) {
     return (
@@ -53,21 +49,11 @@ export function BudgetList({
                   )}
                 </p>
                 {canEdit && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label="Delete budget"
-                    disabled={pending}
-                    onClick={() =>
-                      startTransition(async () => {
-                        const res = await deleteBudget(b.id);
-                        if (res?.error) toast.error(res.error);
-                        else toast.success(t.budgets.deleted);
-                      })
-                    }
-                  >
-                    <Trash2 className="size-4 text-muted-foreground" />
-                  </Button>
+                  <ConfirmDelete
+                    action={() => deleteBudget(b.id)}
+                    successMessage={t.budgets.deleted}
+                    ariaLabel="Delete budget"
+                  />
                 )}
               </div>
               <Progress

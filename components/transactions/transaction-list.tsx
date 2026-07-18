@@ -1,14 +1,12 @@
 "use client";
 
-import { useTransition } from "react";
-import { toast } from "sonner";
-import { ArrowDownLeft, ArrowLeftRight, ArrowUpRight, Trash2 } from "lucide-react";
+import { ArrowDownLeft, ArrowLeftRight, ArrowUpRight } from "lucide-react";
 import { deleteTransaction } from "@/lib/actions/transactions";
 import { formatMoney } from "@/lib/finance";
 import { useFormatDate, useT } from "@/components/locale-provider";
+import { ConfirmDelete } from "@/components/confirm-delete";
 import { PAYMENT_METHOD_LABELS, type TransactionWithNames } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 function TypeIcon({ type }: { type: string }) {
@@ -40,7 +38,6 @@ export function TransactionList({
 }) {
   const t = useT();
   const formatDate = useFormatDate();
-  const [pending, startTransition] = useTransition();
 
   if (transactions.length === 0) {
     return (
@@ -94,21 +91,11 @@ export function TransactionList({
               )}
             </span>
             {showDelete && (
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Delete transaction"
-                disabled={pending}
-                onClick={() =>
-                  startTransition(async () => {
-                    const res = await deleteTransaction(tx.id);
-                    if (res?.error) toast.error(res.error);
-                    else toast.success(t.tx.deleted);
-                  })
-                }
-              >
-                <Trash2 className="size-4 text-muted-foreground" />
-              </Button>
+              <ConfirmDelete
+                action={() => deleteTransaction(tx.id)}
+                successMessage={t.tx.deleted}
+                ariaLabel="Delete transaction"
+              />
             )}
           </li>
         );

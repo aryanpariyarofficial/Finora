@@ -2,10 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { PiggyBank, Plus, Trash2 } from "lucide-react";
+import { PiggyBank, Plus } from "lucide-react";
 import { addContribution, deleteGoal } from "@/lib/actions/goals";
 import { useFormatDate, useT } from "@/components/locale-provider";
 import { formatMoney } from "@/lib/finance";
+import { ConfirmDelete } from "@/components/confirm-delete";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -72,21 +73,11 @@ export function GoalCard({ goal }: { goal: Goal }) {
               )}
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={t.goals.deleted}
-            disabled={pending}
-            onClick={() =>
-              startTransition(async () => {
-                const res = await deleteGoal(goal.id);
-                if (res?.error) toast.error(res.error);
-                else toast.success(t.goals.deleted);
-              })
-            }
-          >
-            <Trash2 className="size-4 text-muted-foreground" />
-          </Button>
+          <ConfirmDelete
+            action={() => deleteGoal(goal.id)}
+            successMessage={t.goals.deleted}
+            ariaLabel={t.goals.deleted}
+          />
         </div>
 
         <Progress value={pct} />

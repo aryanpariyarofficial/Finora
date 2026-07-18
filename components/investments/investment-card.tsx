@@ -2,13 +2,14 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { RefreshCcw, Trash2, TrendingDown, TrendingUp } from "lucide-react";
+import { RefreshCcw, TrendingDown, TrendingUp } from "lucide-react";
 import {
   deleteInvestment,
   updateInvestmentValue,
 } from "@/lib/actions/investments";
 import { useFormatDate, useT } from "@/components/locale-provider";
 import { formatMoney } from "@/lib/finance";
+import { ConfirmDelete } from "@/components/confirm-delete";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -105,21 +106,11 @@ export function InvestmentCard({
                 </form>
               </DialogContent>
             </Dialog>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Delete investment"
-              disabled={pending}
-              onClick={() =>
-                startTransition(async () => {
-                  const res = await deleteInvestment(investment.id);
-                  if (res?.error) toast.error(res.error);
-                  else toast.success(t.invest.deleted);
-                })
-              }
-            >
-              <Trash2 className="size-4 text-muted-foreground" />
-            </Button>
+            <ConfirmDelete
+              action={() => deleteInvestment(investment.id)}
+              successMessage={t.invest.deleted}
+              ariaLabel="Delete investment"
+            />
           </div>
         )}
       </CardHeader>

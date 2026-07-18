@@ -2,10 +2,11 @@
 
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { Pause, Play, Repeat, Trash2 } from "lucide-react";
+import { Pause, Play, Repeat } from "lucide-react";
 import { deleteRecurring, toggleRecurring } from "@/lib/actions/recurring";
 import { useFormatDate, useT } from "@/components/locale-provider";
 import { formatMoney } from "@/lib/finance";
+import { ConfirmDelete } from "@/components/confirm-delete";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -91,21 +92,11 @@ export function RecurringList({ items }: { items: RecurringRow[] }) {
                   <Play className="size-4" />
                 )}
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label={t.recur.deleted}
-                disabled={pending}
-                onClick={() =>
-                  startTransition(async () => {
-                    const res = await deleteRecurring(r.id);
-                    if (res?.error) toast.error(res.error);
-                    else toast.success(t.recur.deleted);
-                  })
-                }
-              >
-                <Trash2 className="size-4 text-muted-foreground" />
-              </Button>
+              <ConfirmDelete
+                action={() => deleteRecurring(r.id)}
+                successMessage={t.recur.deleted}
+                ariaLabel={t.recur.deleted}
+              />
             </CardContent>
           </Card>
         );
