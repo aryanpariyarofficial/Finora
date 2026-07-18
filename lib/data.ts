@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { monthStart, todayISO } from "@/lib/finance";
 import type {
@@ -5,7 +6,9 @@ import type {
   TransactionWithNames,
 } from "@/lib/types";
 
-export async function getAccounts() {
+// Cached per request: the app layout (mobile nav) and most pages both need
+// the account list, so this dedupes to a single account_balances query.
+export const getAccounts = cache(async () => {
   const supabase = await createClient();
   const { data } = await supabase
     .from("account_balances")
@@ -14,7 +17,7 @@ export async function getAccounts() {
     .order("kind")
     .order("sort_order");
   return (data ?? []) as AccountBalance[];
-}
+});
 
 const TRANSACTION_SELECT = `
   *,

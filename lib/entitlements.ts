@@ -1,11 +1,13 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Entitlements } from "@/lib/billing";
 
 /**
  * Runs the lazy daily point deduction and returns the fresh entitlement
- * snapshot. Call once per request from layouts/actions that need gating.
+ * snapshot. Wrapped in React cache() so the layout and the page share a
+ * single sync_points RPC per request instead of running it 2-3 times.
  */
-export async function getEntitlements(): Promise<Entitlements> {
+export const getEntitlements = cache(async (): Promise<Entitlements> => {
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("sync_points").single();
 
@@ -36,4 +38,4 @@ export async function getEntitlements(): Promise<Entitlements> {
     isPremium: row.lifetime || row.points > 0,
     isSuperAdmin: row.role === "super_admin",
   };
-}
+});
