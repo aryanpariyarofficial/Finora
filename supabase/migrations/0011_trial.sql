@@ -4,14 +4,15 @@
 -- cron then emails "premium expires soon" at 3/2/1 days, nudging a purchase.
 -- Run after 0010_networth.sql.
 
--- 1) Existing free users (0 points, not lifetime) get the 3-day trial.
---    Users with a real purchase or referral bonus (points > 0) are untouched.
+-- 1) Any non-lifetime user with fewer than 3 points is topped up to the
+--    3-day trial. Lifetime users and anyone already at 3+ points (purchase
+--    or referral) are untouched.
 update public.profiles
 set points = 3, points_synced_on = current_date
-where lifetime = false and points = 0;
+where lifetime = false and points < 3;
 
 -- 2) Every new signup gets 3 trial points — unless a referral already
---    granted them points (don't overwrite the referral bonus).
+--    granted them more (don't overwrite the referral bonus).
 create or replace function public.grant_trial_points()
 returns trigger
 language plpgsql
@@ -20,7 +21,7 @@ as $$
 begin
   update public.profiles
   set points = 3, points_synced_on = current_date
-  where id = new.id and lifetime = false and points = 0;
+  where id = new.id and lifetime = false and points < 3;
   return new;
 end;
 $$;
