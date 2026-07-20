@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { Landmark, Lock } from "lucide-react";
-import { AmortizationDialog } from "@/components/loans/amortization-dialog";
+import { CalendarClock, Landmark, Lock } from "lucide-react";
 import { LoanForm } from "@/components/loans/loan-form";
 import { LoanPaymentForm } from "@/components/loans/loan-payment-form";
 import { Badge } from "@/components/ui/badge";
@@ -89,13 +88,12 @@ export default async function LoansPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <AmortizationDialog
-                      lender={loan.lender}
-                      principal={loan.principal}
-                      ratePct={loan.annual_interest_rate}
-                      months={loan.term_months}
-                      emiAmount={loan.emi_amount}
-                    />
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href={`/loans/${loan.id}`}>
+                        <CalendarClock className="size-4" />
+                        {t.loans.viewSchedule}
+                      </Link>
+                    </Button>
                     {ent.isPremium && !closed && (
                       <LoanPaymentForm
                         loanId={loan.id}

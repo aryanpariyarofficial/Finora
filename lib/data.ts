@@ -243,6 +243,11 @@ export async function getLoans(): Promise<LoanWithStatus[]> {
   });
 }
 
+export async function getLoan(id: string): Promise<LoanWithStatus | null> {
+  const loans = await getLoans();
+  return loans.find((l) => l.id === id) ?? null;
+}
+
 // ---------- Investments ----------
 
 export interface InvestmentRow {
