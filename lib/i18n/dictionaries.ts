@@ -41,6 +41,8 @@ export const en = {
     left: "to go",
     by: "by",
     empty: "No savings goals yet. Set your first target!",
+    bsLongTermNote:
+      "For a goal more than ~6 years away, switch to the English (AD) calendar in your profile — the Nepali calendar only supports dates up to 2090 BS.",
   },
   recur: {
     title: "Recurring transactions",
@@ -354,6 +356,9 @@ export const en = {
     emiKnown: "Monthly EMI (optional)",
     emiKnownHint:
       "Already know your EMI from the bank? Enter it and Finora uses it as-is. Leave blank and we calculate it from the amount, rate and duration.",
+    emiDay: "EMI day of month (optional)",
+    emiDayHint:
+      "The date each EMI is due (e.g. 10 for the 10th). Leave blank to use the start date's day. This makes the schedule match your bank statement.",
     outstanding: "Outstanding",
     create: "Create loan",
     creating: "Creating…",
@@ -494,6 +499,8 @@ export const ne: Dict = {
     left: "बाँकी",
     by: "सम्ममा",
     empty: "अहिलेसम्म बचत लक्ष्य छैन। पहिलो लक्ष्य राख्नुहोस्!",
+    bsLongTermNote:
+      "करिब ६ वर्षभन्दा टाढाको लक्ष्यका लागि Profile मा English (AD) पात्रो छान्नुहोस् — नेपाली पात्रो 2090 सम्म मात्र मिल्छ।",
   },
   recur: {
     title: "दोहोरिने कारोबार",
@@ -807,6 +814,9 @@ export const ne: Dict = {
     emiKnown: "मासिक EMI (वैकल्पिक)",
     emiKnownHint:
       "बैंकबाट EMI थाहा छ? यहाँ लेख्नुहोस् — Finora ले त्यही प्रयोग गर्छ। खाली छोड्दा रकम, ब्याज र अवधिबाट आफैं हिसाब गर्छ।",
+    emiDay: "EMI तिर्ने गते (वैकल्पिक)",
+    emiDayHint:
+      "हरेक महिना EMI तिर्ने गते (जस्तै १० गते भए 10)। खाली छोड्दा सुरु मितिको गते प्रयोग हुन्छ। यसले तालिका बैंकको statement सँग मिलाउँछ।",
     outstanding: "बाँकी रकम",
     create: "ऋण बनाउनुहोस्",
     creating: "बन्दैछ…",

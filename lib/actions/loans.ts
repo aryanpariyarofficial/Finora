@@ -14,6 +14,7 @@ const loanSchema = z
     start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date"),
     term_months: z.coerce.number().int().positive("Duration must be at least 1 month"),
     emi_amount: z.coerce.number().positive().optional().or(z.literal("")),
+    emi_day: z.coerce.number().int().min(1).max(31).optional().or(z.literal("")),
     months_paid: z.coerce.number().int().min(0).default(0),
     // Required only for brand-new loans (months_paid = 0).
     deposit_account_id: z.string().uuid().optional().or(z.literal("")),
@@ -95,6 +96,10 @@ export async function createLoan(
       start_date: v.start_date,
       term_months: v.term_months,
       emi_amount: Math.round(emi * 100) / 100,
+      emi_day:
+        typeof v.emi_day === "number"
+          ? v.emi_day
+          : new Date(`${v.start_date}T00:00:00`).getDate(),
     })
     .select("id")
     .single();

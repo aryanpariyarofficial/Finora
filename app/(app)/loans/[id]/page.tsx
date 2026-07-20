@@ -45,6 +45,7 @@ export default async function LoanSchedulePage({
     termMonths: loan.term_months,
     startDate: loan.start_date,
     emiAmount: loan.emi_amount,
+    emiDay: loan.emi_day,
     paymentsMade: loan.payments_count,
     todayISO: todayISO(),
   });

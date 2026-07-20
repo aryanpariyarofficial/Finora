@@ -111,21 +111,35 @@ export function LoanForm({ accounts }: { accounts: AccountBalance[] }) {
               placeholder="60"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="emi_amount">{t.loans.emiKnown}</Label>
-            <Input
-              id="emi_amount"
-              name="emi_amount"
-              type="number"
-              inputMode="decimal"
-              step="0.01"
-              min="0"
-              placeholder="15,000"
-            />
-            <p className="text-xs text-muted-foreground">
-              {t.loans.emiKnownHint}
-            </p>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="emi_amount">{t.loans.emiKnown}</Label>
+              <Input
+                id="emi_amount"
+                name="emi_amount"
+                type="number"
+                inputMode="decimal"
+                step="0.01"
+                min="0"
+                placeholder="15,000"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="emi_day">{t.loans.emiDay}</Label>
+              <Input
+                id="emi_day"
+                name="emi_day"
+                type="number"
+                min="1"
+                max="31"
+                step="1"
+                placeholder="10"
+              />
+            </div>
           </div>
+          <p className="-mt-2 text-xs text-muted-foreground">
+            {t.loans.emiDayHint}
+          </p>
           <div className="space-y-2">
             <Label htmlFor="months_paid">{t.loans.monthsPaid}</Label>
             <Input

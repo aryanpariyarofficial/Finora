@@ -194,6 +194,7 @@ export interface LoanWithStatus {
   start_date: string;
   term_months: number;
   emi_amount: number | null;
+  emi_day: number | null;
   status: string;
   liability_account_id: string;
   outstanding: number;

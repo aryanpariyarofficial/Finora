@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
 import { createGoal } from "@/lib/actions/goals";
-import { useT } from "@/components/locale-provider";
+import { useCalendar, useT } from "@/components/locale-provider";
 import { Button } from "@/components/ui/button";
 import { DateField } from "@/components/ui/date-field";
 import {
@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 
 export function GoalForm() {
   const t = useT();
+  const calendar = useCalendar();
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
 
@@ -86,6 +87,11 @@ export function GoalForm() {
           <div className="space-y-2">
             <Label htmlFor="target_date">{t.goals.targetDate}</Label>
             <DateField id="target_date" name="target_date" optional />
+            {calendar === "bs" && (
+              <p className="text-xs text-muted-foreground">
+                {t.goals.bsLongTermNote}
+              </p>
+            )}
           </div>
           <Button type="submit" className="w-full" disabled={pending}>
             {pending ? t.goals.creating : t.goals.create}
