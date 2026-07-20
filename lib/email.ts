@@ -174,14 +174,27 @@ export async function sendEmiReminderEmail(opts: {
   emiAmount: number | null;
   dueDate: string;
   outstanding: number;
+  urgent?: boolean;
 }) {
   const name = opts.fullName?.split(" ")[0] ?? "there";
+  const urgent = opts.urgent === true;
+  const banner = urgent
+    ? `<p style="margin:0 0 14px;padding:10px 14px;background:#fee2e2;border-radius:8px;
+         border:1px solid #fca5a5;color:#b91c1c;font-weight:700;">
+         ⚠️ URGENT — your EMI is due TOMORROW. Please pay on time to avoid late fees.
+       </p>`
+    : "";
   await sendEmail({
     to: opts.email,
-    subject: `⏰ EMI reminder — ${opts.lender} due ${opts.dueDate}`,
+    subject: urgent
+      ? `⚠️ URGENT: EMI due tomorrow — ${opts.lender}`
+      : `⏰ EMI reminder — ${opts.lender} due ${opts.dueDate}`,
     html: shell(
-      `Hi ${esc(name)}, your EMI is coming up`,
-      `<p>Your loan payment for <b>${esc(opts.lender)}</b> is due on <b>${opts.dueDate}</b>.</p>
+      urgent
+        ? `Hi ${esc(name)}, your EMI is due tomorrow`
+        : `Hi ${esc(name)}, your EMI is coming up`,
+      `${banner}
+       <p>Your loan payment for <b>${esc(opts.lender)}</b> is due on <b>${opts.dueDate}</b>.</p>
        <table style="font-size:14px;border-collapse:collapse;">
          ${
            opts.emiAmount != null

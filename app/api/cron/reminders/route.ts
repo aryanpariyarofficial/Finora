@@ -16,10 +16,26 @@ function toISODate(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-function nextDueDate(startDate: string, paymentsCount: number) {
-  const d = new Date(`${startDate}T00:00:00`);
-  d.setMonth(d.getMonth() + paymentsCount + 1);
-  return d;
+/** The EMI due date after `paymentsCount` payments, on the loan's EMI day. */
+function nextDueDate(
+  startDate: string,
+  paymentsCount: number,
+  emiDay?: number | null,
+) {
+  const start = new Date(`${startDate}T00:00:00`);
+  const day = emiDay && emiDay >= 1 ? emiDay : start.getDate();
+  const y = start.getFullYear();
+  const m = start.getMonth() + paymentsCount + 1;
+  const lastDay = new Date(y, m + 1, 0).getDate();
+  return new Date(y, m, Math.min(day, lastDay));
+}
+
+function daysUntil(from: Date, to: Date) {
+  return Math.round(
+    (Date.UTC(to.getFullYear(), to.getMonth(), to.getDate()) -
+      Date.UTC(from.getFullYear(), from.getMonth(), from.getDate())) /
+      86_400_000,
+  );
 }
 
 /**
@@ -80,10 +96,10 @@ export async function GET(request: Request) {
     return true;
   }
 
-  // ---------- Loan EMI reminders ----------
+  // ---------- Loan EMI reminders (3 / 2 / 1 days before, email on day 1) ----------
   const { data: loans } = await supabase
     .from("loans")
-    .select("id, user_id, lender, emi_amount, start_date, liability_account_id, status")
+    .select("id, user_id, lender, emi_amount, emi_day, start_date, liability_account_id, status")
     .eq("status", "active");
 
   for (const loan of loans ?? []) {
@@ -92,12 +108,13 @@ export async function GET(request: Request) {
       .select("id", { count: "exact", head: true })
       .eq("loan_id", loan.id);
 
-    const due = nextDueDate(loan.start_date, count ?? 0);
-    if (due < today || due > horizon) continue;
+    const due = nextDueDate(loan.start_date, count ?? 0, loan.emi_day);
+    const left = daysUntil(today, due);
+    if (left < 1 || left > 3) continue; // remind only at 3, 2, 1 days
 
     const dueISO = toISODate(due);
-    const dedupeKey = `emi_due:${loan.id}:${dueISO}`;
-
+    // Separate notification each of day 3 / 2 / 1.
+    const dedupeKey = `emi_due:${loan.id}:${dueISO}:${left}`;
     const { data: existing } = await supabase
       .from("notifications")
       .select("id")
@@ -124,21 +141,28 @@ export async function GET(request: Request) {
     );
     if (outstanding <= 0) continue;
 
-    await sendEmiReminderEmail({
-      email: profile.email,
-      fullName: profile.full_name,
-      lender: loan.lender,
-      emiAmount: loan.emi_amount != null ? Number(loan.emi_amount) : null,
-      dueDate: dueISO,
-      outstanding,
-    });
-
+    const urgent = left === 1;
     await supabase.from("notifications").insert({
       user_id: loan.user_id,
       type: dedupeKey,
-      title: `EMI due ${dueISO} — ${loan.lender}`,
+      title: urgent
+        ? `⚠️ URGENT: EMI due tomorrow — ${loan.lender}`
+        : `EMI due in ${left} days — ${loan.lender}`,
       body: `Your loan payment for ${loan.lender} is due on ${dueISO}.`,
     });
+
+    // Email only on the final day (day 1), marked urgent.
+    if (urgent) {
+      await sendEmiReminderEmail({
+        email: profile.email,
+        fullName: profile.full_name,
+        lender: loan.lender,
+        emiAmount: loan.emi_amount != null ? Number(loan.emi_amount) : null,
+        dueDate: dueISO,
+        outstanding,
+        urgent: true,
+      });
+    }
     emiSent++;
   }
 
