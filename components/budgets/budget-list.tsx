@@ -34,19 +34,31 @@ export function BudgetList({
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       {budgets.map((b) => {
-        const pct = Math.min(100, Math.round((b.spent / b.amount) * 100));
+        const rawPct = Math.round((b.spent / b.amount) * 100);
+        const pct = Math.min(100, rawPct);
         const over = b.spent > b.amount;
+        const near = !over && rawPct >= 90;
         return (
-          <Card key={b.id}>
+          <Card
+            key={b.id}
+            className={cn(
+              over && "border-destructive/50",
+              near && "border-[var(--warning)]/50",
+            )}
+          >
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between gap-2">
                 <p className="font-medium">
                   {b.category_name}
-                  {over && (
+                  {over ? (
                     <Badge variant="destructive" className="ml-2">
                       {t.budgets.overBudget}
                     </Badge>
-                  )}
+                  ) : near ? (
+                    <Badge className="ml-2 bg-[var(--warning)] text-white">
+                      {t.budgets.nearLimit}
+                    </Badge>
+                  ) : null}
                 </p>
                 {canEdit && (
                   <ConfirmDelete
@@ -58,7 +70,10 @@ export function BudgetList({
               </div>
               <Progress
                 value={pct}
-                className={cn(over && "[&>[data-slot=progress-indicator]]:bg-destructive")}
+                className={cn(
+                  over && "[&>[data-slot=progress-indicator]]:bg-destructive",
+                  near && "[&>[data-slot=progress-indicator]]:bg-[var(--warning)]",
+                )}
               />
               <p className="text-sm text-muted-foreground">
                 <span

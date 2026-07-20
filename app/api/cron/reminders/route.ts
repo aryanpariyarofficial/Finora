@@ -200,29 +200,39 @@ export async function GET(request: Request) {
       .gte("occurred_on", monthFirst)
       .lt("occurred_on", toISODate(monthEnd));
     const spent = (txs ?? []).reduce((acc, x) => acc + Number(x.amount), 0);
-    if (spent <= Number(b.amount)) continue;
+    const ratio = spent / Number(b.amount);
+    if (ratio < 0.9) continue; // alert at 90%+
 
+    const over = spent > Number(b.amount);
     const [{ data: profile }, { data: cat }] = await Promise.all([
       supabase.from("profiles").select("email, full_name").eq("id", b.user_id).single(),
       supabase.from("accounts").select("name").eq("id", b.category_id).single(),
     ]);
     if (!profile?.email) continue;
 
+    const catName = cat?.name ?? "category";
     const fresh = await notifyOnce(
       b.user_id,
-      `budget_exceeded:${b.id}:${monthStr}`,
-      `Budget exceeded — ${cat?.name ?? "category"}`,
-      `You've spent over your ${cat?.name ?? "category"} budget this month.`,
+      `budget_${over ? "exceeded" : "near"}:${b.id}:${monthStr}`,
+      over
+        ? `Budget exceeded — ${catName}`
+        : `Budget almost used — ${catName}`,
+      over
+        ? `You've spent over your ${catName} budget this month.`
+        : `You've used ${Math.round(ratio * 100)}% of your ${catName} budget.`,
     );
     if (!fresh) continue;
 
-    await sendBudgetExceededEmail({
-      email: profile.email,
-      fullName: profile.full_name,
-      category: cat?.name ?? "category",
-      spent,
-      budget: Number(b.amount),
-    });
+    // Only email when actually over budget; the in-app alert covers 90%.
+    if (over) {
+      await sendBudgetExceededEmail({
+        email: profile.email,
+        fullName: profile.full_name,
+        category: catName,
+        spent,
+        budget: Number(b.amount),
+      });
+    }
     budgetSent++;
   }
 

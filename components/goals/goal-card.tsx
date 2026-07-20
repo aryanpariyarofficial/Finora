@@ -80,7 +80,17 @@ export function GoalCard({ goal }: { goal: Goal }) {
           />
         </div>
 
-        <Progress value={pct} />
+        <div className="space-y-1">
+          <div className="flex items-center justify-between text-xs font-medium">
+            <span className="text-[oklch(0.55_0.21_355)]">{pct}%</span>
+            {!achieved && (
+              <span className="text-muted-foreground">
+                <Money value={remaining} /> {t.goals.left}
+              </span>
+            )}
+          </div>
+          <Progress value={pct} />
+        </div>
 
         <div className="flex items-center justify-between text-sm">
           <span className="font-semibold tabular-nums">
@@ -90,14 +100,10 @@ export function GoalCard({ goal }: { goal: Goal }) {
               {t.goals.of} <Money value={goal.target_amount} />
             </span>
           </span>
-          {achieved ? (
+          {achieved && (
             <Badge className="bg-[var(--success)] text-white">
               {t.goals.achieved}
             </Badge>
-          ) : (
-            <span className="text-xs text-muted-foreground">
-              <Money value={remaining} /> {t.goals.left}
-            </span>
           )}
         </div>
 

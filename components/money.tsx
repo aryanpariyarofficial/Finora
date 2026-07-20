@@ -8,8 +8,11 @@ import { Button } from "@/components/ui/button";
 const KEY = "finora-hide-amounts";
 const listeners = new Set<() => void>();
 
+// Amounts are hidden BY DEFAULT (bank-app style). Only an explicit "0"
+// (the user tapped the eye to reveal) shows them.
 function getSnapshot() {
-  return typeof window !== "undefined" && localStorage.getItem(KEY) === "1";
+  if (typeof window === "undefined") return true;
+  return localStorage.getItem(KEY) !== "0";
 }
 function subscribe(cb: () => void) {
   listeners.add(cb);
@@ -26,9 +29,27 @@ export function useMoneyHidden() {
 }
 
 function toggleMoneyHidden() {
-  const next = getSnapshot() ? "0" : "1";
-  localStorage.setItem(KEY, next);
+  // hidden → "0" (show); shown → "1" (hide).
+  localStorage.setItem(KEY, getSnapshot() ? "0" : "1");
   listeners.forEach((l) => l());
+}
+
+/** Small inline eye toggle to sit right next to an amount. */
+export function MoneyEye({ className }: { className?: string }) {
+  const hidden = useMoneyHidden();
+  return (
+    <button
+      type="button"
+      aria-label={hidden ? "Show amount" : "Hide amount"}
+      onClick={toggleMoneyHidden}
+      className={
+        "inline-flex text-muted-foreground transition-colors hover:text-foreground " +
+        (className ?? "")
+      }
+    >
+      {hidden ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+    </button>
+  );
 }
 
 /**

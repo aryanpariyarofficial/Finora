@@ -30,7 +30,7 @@ import {
 } from "@/lib/data";
 import { getEntitlements } from "@/lib/entitlements";
 import { monthStart } from "@/lib/finance";
-import { Money } from "@/components/money";
+import { Money, MoneyEye } from "@/components/money";
 import { getDict } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 
@@ -127,7 +127,12 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           title={t.dash.currentBalance}
-          value={<Money value={currentBalance} />}
+          value={
+            <span className="inline-flex items-center gap-2">
+              <Money value={currentBalance} />
+              <MoneyEye />
+            </span>
+          }
           hint={`${moneyAccounts.length} ${t.dash.accounts}`}
           icon={Wallet}
         />

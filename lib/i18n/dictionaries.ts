@@ -337,6 +337,8 @@ export const en = {
     of: "of",
     empty: "No budgets for this month yet. Set your first limit.",
     overBudget: "Over budget",
+    nearLimit: "Near limit",
+    alertBanner: "Heads up — you're near or over the limit on these budgets:",
   },
   loans: {
     title: "Loans",
@@ -788,6 +790,8 @@ export const ne: Dict = {
     of: "मध्ये",
     empty: "यो महिनाको बजेट छैन। पहिलो सीमा तोक्नुहोस्।",
     overBudget: "बजेट नाघ्यो",
+    nearLimit: "सीमा नजिक",
+    alertBanner: "सतर्क हुनुहोस् — यी बजेटहरू सीमा नजिक वा नाघेका छन्:",
   },
   loans: {
     title: "ऋण",

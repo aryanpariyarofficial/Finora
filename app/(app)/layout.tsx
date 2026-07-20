@@ -5,7 +5,6 @@ import { AppLock } from "@/components/app-lock";
 import { AppSidebar } from "@/components/app-sidebar";
 import { FreeBanner } from "@/components/free-banner";
 import { MobileNav } from "@/components/mobile-nav";
-import { MoneyToggle } from "@/components/money";
 import { NotificationBell } from "@/components/notification-bell";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { PointsPill } from "@/components/points-pill";
@@ -94,7 +93,6 @@ export default async function AppLayout({
                 points={entitlements.points}
                 lifetime={entitlements.lifetime}
               />
-              <MoneyToggle />
               <NotificationBell
                 notifications={notifications ?? []}
                 unreadCount={unreadCount}

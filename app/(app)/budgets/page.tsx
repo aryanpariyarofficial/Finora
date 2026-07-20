@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Lock } from "lucide-react";
+import { Lock, TriangleAlert } from "lucide-react";
 import { BudgetForm } from "@/components/budgets/budget-form";
 import { BudgetList } from "@/components/budgets/budget-list";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,9 @@ export default async function BudgetsPage() {
     year: "numeric",
   });
 
+  // Budgets at 90%+ of their limit — surfaced as an alert banner.
+  const atRisk = budgets.filter((b) => b.spent / b.amount >= 0.9);
+
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -47,6 +50,16 @@ export default async function BudgetsPage() {
           </Button>
         )}
       </div>
+
+      {atRisk.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 rounded-lg border border-[var(--warning)]/40 bg-[var(--warning)]/10 px-4 py-3 text-sm">
+          <TriangleAlert className="size-4 shrink-0 text-[var(--warning)]" />
+          <span>{t.budgets.alertBanner}</span>
+          <span className="font-medium">
+            {atRisk.map((b) => b.category_name).join(", ")}
+          </span>
+        </div>
+      )}
 
       <BudgetList budgets={budgets} canEdit={ent.isPremium} />
     </>

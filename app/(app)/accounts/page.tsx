@@ -5,7 +5,7 @@ import { AccountForm } from "@/components/accounts/account-form";
 import { Button } from "@/components/ui/button";
 import { getAccounts } from "@/lib/data";
 import { getEntitlements } from "@/lib/entitlements";
-import { Money } from "@/components/money";
+import { Money, MoneyEye } from "@/components/money";
 import { getDict } from "@/lib/i18n/server";
 
 export const metadata = { title: "Accounts" };
@@ -31,8 +31,9 @@ export default async function AccountsPage() {
           <h1 className="text-2xl font-bold tracking-tight">
             {t.accounts.title}
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="flex items-center gap-2 text-sm text-muted-foreground">
             {t.accounts.totalBalance}: <Money value={total} />
+            <MoneyEye />
           </p>
         </div>
         {ent.isPremium ? (
