@@ -12,6 +12,10 @@ export const BS_MONTHS_NE = [
   "कार्तिक", "मंसिर", "पुष", "माघ", "फागुन", "चैत",
 ];
 
+// nepali-date-converter's data table covers BS 2000–2090.
+export const MIN_BS_YEAR = 2070;
+export const MAX_BS_YEAR = 2090;
+
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /** Converts Latin digits in a string to Devanagari. */
@@ -35,13 +39,19 @@ export function bsToADISO(year: number, month: number, day: number): string {
 
 /** Days in a given BS month (month 0-indexed). */
 export function bsDaysInMonth(year: number, month: number): number {
-  const firstAd = new NepaliDate(year, month, 1).getAD();
-  const nextYear = month === 11 ? year + 1 : year;
-  const nextMonth = month === 11 ? 0 : month + 1;
-  const nextAd = new NepaliDate(nextYear, nextMonth, 1).getAD();
-  const first = Date.UTC(firstAd.year, firstAd.month, firstAd.date);
-  const next = Date.UTC(nextAd.year, nextAd.month, nextAd.date);
-  return Math.round((next - first) / 86_400_000);
+  try {
+    const firstAd = new NepaliDate(year, month, 1).getAD();
+    const nextYear = month === 11 ? year + 1 : year;
+    const nextMonth = month === 11 ? 0 : month + 1;
+    // Beyond the converter's range (e.g. Chaitra of the max year): fall back.
+    if (nextYear > MAX_BS_YEAR) return 30;
+    const nextAd = new NepaliDate(nextYear, nextMonth, 1).getAD();
+    const first = Date.UTC(firstAd.year, firstAd.month, firstAd.date);
+    const next = Date.UTC(nextAd.year, nextAd.month, nextAd.date);
+    return Math.round((next - first) / 86_400_000);
+  } catch {
+    return 30;
+  }
 }
 
 /** Current year in BS. */

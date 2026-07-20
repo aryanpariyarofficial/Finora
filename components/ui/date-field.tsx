@@ -5,10 +5,11 @@ import { useCalendar, useLocale } from "@/components/locale-provider";
 import {
   BS_MONTHS_EN,
   BS_MONTHS_NE,
+  MAX_BS_YEAR,
+  MIN_BS_YEAR,
   adISOtoBS,
   bsDaysInMonth,
   bsToADISO,
-  currentBSYear,
   toNepaliDigits,
 } from "@/lib/calendar";
 import { todayISO } from "@/lib/finance";
@@ -127,9 +128,9 @@ function BSDatePicker({
   const safeDay = Math.min(day, maxDay);
   const iso = bsToADISO(year, month, safeDay);
 
-  const thisYear = currentBSYear();
+  // Full supported BS range so far-future goals/loans and past dates both work.
   const years: number[] = [];
-  for (let y = thisYear + 1; y >= 2070; y--) years.push(y);
+  for (let y = MAX_BS_YEAR; y >= MIN_BS_YEAR; y--) years.push(y);
 
   const fmt = (n: number) =>
     locale === "ne" ? toNepaliDigits(n) : String(n);
