@@ -185,6 +185,49 @@ export async function createLoan(
  * principal slice transfers from the paying account into the loan
  * liability, reducing the outstanding balance.
  */
+export async function deleteLoan(
+  id: string,
+): Promise<{ error?: string; success?: boolean }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not signed in." };
+
+  const ent = await getEntitlements();
+  if (!ent.isPremium) return PREMIUM_ERROR;
+
+  const { data: loan } = await supabase
+    .from("loans")
+    .select("liability_account_id")
+    .eq("id", id)
+    .single();
+  if (!loan) return { error: "Loan not found." };
+
+  // Remove the loan's ledger footprint: payment history, disbursement and
+  // principal/opening transactions (postings cascade on transaction delete),
+  // then archive the liability account and delete the loan itself.
+  await supabase.from("loan_payments").delete().eq("loan_id", id);
+  await supabase
+    .from("transactions")
+    .delete()
+    .or(
+      `account_id.eq.${loan.liability_account_id},counter_account_id.eq.${loan.liability_account_id}`,
+    );
+  await supabase
+    .from("accounts")
+    .update({ is_archived: true })
+    .eq("id", loan.liability_account_id);
+
+  const { error } = await supabase.from("loans").delete().eq("id", id);
+  if (error) return { error: error.message };
+
+  revalidatePath("/loans");
+  revalidatePath("/dashboard");
+  revalidatePath("/accounts");
+  return { success: true };
+}
+
 export async function recordLoanPayment(
   _prev: LoanFormState,
   formData: FormData,

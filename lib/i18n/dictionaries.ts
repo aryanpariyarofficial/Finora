@@ -380,6 +380,7 @@ export const en = {
     nextDue: "Next due",
     empty: "No loans yet.",
     closed: "Closed",
+    deleted: "Loan deleted",
     monthsPaid: "EMIs already paid (months)",
     monthsPaidHint:
       "Adding an old loan? Enter how many monthly EMIs you've already paid — Finora rebuilds the history and current outstanding automatically.",
@@ -838,6 +839,7 @@ export const ne: Dict = {
     nextDue: "अर्को किस्ता",
     empty: "अहिलेसम्म कुनै ऋण छैन।",
     closed: "बन्द",
+    deleted: "ऋण मेटियो",
     monthsPaid: "तिरिसकेका EMI (महिना)",
     monthsPaidHint:
       "पुरानो ऋण थप्दै हुनुहुन्छ? कति महिनाको EMI तिरिसक्नुभयो लेख्नुहोस् — Finora ले इतिहास र बाँकी रकम आफैं मिलाउँछ।",

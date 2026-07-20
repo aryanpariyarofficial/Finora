@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { CalendarClock, Landmark, Lock } from "lucide-react";
+import { deleteLoan } from "@/lib/actions/loans";
+import { ConfirmDelete } from "@/components/confirm-delete";
 import { LoanForm } from "@/components/loans/loan-form";
 import { LoanPaymentForm } from "@/components/loans/loan-payment-form";
 import { Badge } from "@/components/ui/badge";
@@ -100,6 +102,16 @@ export default async function LoansPage() {
                         lender={loan.lender}
                         defaultAmount={loan.emi_amount}
                         accounts={assetAccounts}
+                      />
+                    )}
+                    {ent.isPremium && (
+                      <ConfirmDelete
+                        action={async () => {
+                          "use server";
+                          return deleteLoan(loan.id);
+                        }}
+                        successMessage={t.loans.deleted}
+                        ariaLabel="Delete loan"
                       />
                     )}
                   </div>
