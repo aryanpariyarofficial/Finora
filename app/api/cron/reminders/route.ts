@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import {
   sendBudgetExceededEmail,
   sendEmiReminderEmail,
+  sendFreeUserPromoEmail,
   sendLowPointsEmail,
   sendMaturityReminderEmail,
 } from "@/lib/email";
@@ -74,6 +75,7 @@ export async function GET(request: Request) {
   let maturitySent = 0;
   let budgetSent = 0;
   let lowPointsSent = 0;
+  let promoSent = 0;
 
   const monthStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
   const monthFirst = `${monthStr}-01`;
@@ -291,11 +293,49 @@ export async function GET(request: Request) {
     lowPointsSent++;
   }
 
+  // ---------- Free-user promo (7+ days on the free plan) ----------
+  // Sent at most once per 14-day window so it never becomes spam.
+  const promoBucket = Math.floor(Date.now() / (14 * 86_400_000));
+  const weekAgoISO = toISODate(
+    new Date(today.getTime() - 7 * 86_400_000),
+  );
+
+  const { data: freeUsers } = await supabase
+    .from("profiles")
+    .select("id, email, full_name, created_at")
+    .eq("lifetime", false)
+    .eq("points", 0)
+    .lt("created_at", `${weekAgoISO}T23:59:59`);
+
+  for (const u of freeUsers ?? []) {
+    if (!u.email) continue;
+    const daysUsing = Math.max(
+      7,
+      Math.round((today.getTime() - new Date(u.created_at).getTime()) / 86_400_000),
+    );
+
+    const fresh = await notifyOnce(
+      u.id,
+      `promo_free:${u.id}:${promoBucket}`,
+      "Unlock loans, investments & budgets",
+      "See what Finora Premium adds to your tracking.",
+    );
+    if (!fresh) continue;
+
+    await sendFreeUserPromoEmail({
+      email: u.email,
+      fullName: u.full_name,
+      daysUsing,
+    });
+    promoSent++;
+  }
+
   return NextResponse.json({
     ok: true,
     emiSent,
     maturitySent,
     budgetSent,
     lowPointsSent,
+    promoSent,
   });
 }

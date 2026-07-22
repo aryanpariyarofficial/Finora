@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Node CommonJS tooling (migration runner), not part of the app bundle.
+    "scripts/**",
   ]),
 ]);
 

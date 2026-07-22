@@ -75,6 +75,37 @@ const whatsappLine = `
     <a href="https://wa.me/977${WHATSAPP_NUMBER}" style="color:#128c7e;font-weight:600;">${WHATSAPP_NUMBER}</a>
   </p>`;
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://finoraypf.vercel.app";
+const UPGRADE_URL = `${SITE_URL}/upgrade`;
+
+/** Big, tappable CTA button that lands on the upgrade page. */
+function ctaButton(label: string, href: string = UPGRADE_URL) {
+  return `
+  <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0;">
+    <tr><td align="center" bgcolor="#ee2a67" style="border-radius:10px;">
+      <a href="${href}"
+         style="display:inline-block;padding:14px 30px;font-size:16px;font-weight:700;
+                color:#ffffff;text-decoration:none;border-radius:10px;">
+        ${label}
+      </a>
+    </td></tr>
+  </table>
+  <p style="font-size:12px;color:#8a8fa8;margin:-12px 0 0;">
+    Or open: <a href="${href}" style="color:#6b7194;">${href}</a>
+  </p>`;
+}
+
+/** What premium unlocks — reused across upgrade-focused emails. */
+const premiumBullets = `
+  <ul style="padding-left:18px;margin:14px 0;line-height:1.9;">
+    <li><b>Loans &amp; EMI</b> — full amortization schedule, interest split, due reminders</li>
+    <li><b>Investments</b> — FD, shares, gold, crypto with live ROI</li>
+    <li><b>Budgets</b> — monthly limits with 90% early warnings</li>
+    <li><b>Unlimited accounts</b> — every bank, wallet and cash source</li>
+    <li><b>Full history + reports</b> — export to Excel or PDF anytime</li>
+  </ul>`;
+
 const PLAN_LABELS: Record<string, string> = {
   monthly: "Monthly (30 days)",
   half_yearly: "6 Months (180 days)",
@@ -236,17 +267,91 @@ export async function sendLowPointsEmail(opts: {
   points: number;
 }) {
   const name = opts.fullName?.split(" ")[0] ?? "there";
+  const n = opts.points;
+  const dayWord = n === 1 ? "day" : "days";
+  const last = n === 1;
+
+  const subject = last
+    ? `⏳ Last day — don't lose your budgets, loans & reports`
+    : `⏳ ${n} ${dayWord} left on your Finora premium`;
+
+  const urgencyLine = last
+    ? `<p style="margin:0 0 14px;padding:10px 14px;background:#fff4e5;border-radius:8px;
+         border:1px solid #ffd8a8;color:#9a5b00;font-weight:700;">
+         This is your final day of premium access.
+       </p>`
+    : "";
+
   await sendEmail({
     to: opts.email,
-    subject: `🔔 Your Finora premium expires in ${opts.points} day${opts.points === 1 ? "" : "s"}`,
+    subject,
     html: shell(
-      `Hi ${esc(name)}, top up to keep premium`,
-      `<p>You have <b>${opts.points} credit${opts.points === 1 ? "" : "s"}</b>
-       (${opts.points} day${opts.points === 1 ? "" : "s"}) of premium left.
-       Top up to keep unlimited history, budgets, loans, investments,
-       reports and exports.</p>
-       <p>Your data is never deleted — but premium features lock when credits
-       run out.</p>
+      last
+        ? `${esc(name)}, your premium ends today`
+        : `${esc(name)}, ${n} ${dayWord} of premium left`,
+      `${urgencyLine}
+       <p>You've been building a real picture of your money — and tomorrow
+       ${last ? "" : "soon "}that picture goes quiet.</p>
+
+       <p><b>When your credits run out you'll lose access to:</b></p>
+       ${premiumBullets}
+
+       <p>Your data is <b>never deleted</b> — every transaction stays exactly
+       where it is. It just becomes read-only until you top up, and everything
+       unlocks again the moment you do.</p>
+
+       <p style="padding:12px 16px;background:#f5f6fb;border-radius:8px;">
+         A month of premium is <b>${formatMoney(500)}</b> — about
+         <b>${formatMoney(17)} a day</b>, less than a cup of tea. One expense
+         you catch pays for the whole month.
+       </p>
+
+       ${ctaButton(last ? "Keep my premium — top up now" : "Top up and keep going")}
+
+       ${whatsappLine}`,
+    ),
+  });
+}
+
+/**
+ * Nudge for free users who've stuck with the app for a week — they have the
+ * habit, so show them what the paid tier adds.
+ */
+export async function sendFreeUserPromoEmail(opts: {
+  email: string;
+  fullName: string | null;
+  daysUsing: number;
+}) {
+  const name = opts.fullName?.split(" ")[0] ?? "there";
+  await sendEmail({
+    to: opts.email,
+    subject: `${esc(name)}, you've tracked for ${opts.daysUsing} days — here's what's next`,
+    html: shell(
+      `Nice work, ${esc(name)} 👏`,
+      `<p>You've been tracking your money in Finora for
+       <b>${opts.daysUsing} days</b>. Most people quit in the first week —
+       you didn't. That habit is the hard part, and it's done.</p>
+
+       <p>Right now you're seeing only a slice of the picture: your latest
+       few transactions. <b>Premium opens the rest:</b></p>
+       ${premiumBullets}
+
+       <p>That's the difference between <i>writing down</i> what you spent and
+       actually <b>seeing where your money goes</b> — which loan is costing
+       you most, which category quietly eats your salary, and how much you
+       could be saving each month.</p>
+
+       <p style="padding:12px 16px;background:#f5f6fb;border-radius:8px;">
+         Plans start at <b>${formatMoney(500)}/month</b> (≈
+         ${formatMoney(17)} a day). Pay once via eSewa, Khalti or bank —
+         no auto-renewal, no card saved, cancel by simply not topping up.
+       </p>
+
+       ${ctaButton("Unlock everything — see plans")}
+
+       <p style="font-size:13px;color:#6b7194;">Not ready? No problem — the
+       free plan stays free, and your data is always yours.</p>
+
        ${whatsappLine}`,
     ),
   });
