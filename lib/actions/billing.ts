@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { PLAN_POINTS } from "@/lib/billing";
 import {
   sendUpgradeRequestEmails,
@@ -164,6 +165,57 @@ export async function adjustUserPoints(
     p_user_id: userId,
     p_delta: delta,
     p_note: note ?? null,
+  });
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin");
+  return { success: true };
+}
+
+/**
+ * Switch an account off (or back on). The DB function refuses to touch the
+ * caller's own account or another super admin. Deactivating also bans the
+ * auth user so their existing session can't be refreshed.
+ */
+export async function setUserActive(
+  userId: string,
+  active: boolean,
+): Promise<{ error?: string; success?: boolean }> {
+  const supabase = await requireSuperAdmin();
+  if (!supabase) return { error: "Not authorized." };
+
+  const { error } = await supabase.rpc("set_user_active", {
+    p_user_id: userId,
+    p_active: active,
+  });
+  if (error) return { error: error.message };
+
+  // Best-effort: the profile flag is what the app and cron read, so a missing
+  // service key degrades the lockout to "next page load" rather than failing.
+  const admin = createAdminClient();
+  if (admin) {
+    await admin.auth.admin.updateUserById(userId, {
+      ban_duration: active ? "none" : "876000h", // ~100 years
+    });
+  }
+
+  revalidatePath("/admin");
+  return { success: true };
+}
+
+/**
+ * Permanently delete a user. Every user_id FK is `on delete cascade`, so
+ * removing the auth row wipes their transactions, accounts and everything
+ * else. Not reversible.
+ */
+export async function deleteUserAccount(
+  userId: string,
+): Promise<{ error?: string; success?: boolean }> {
+  const supabase = await requireSuperAdmin();
+  if (!supabase) return { error: "Not authorized." };
+
+  const { error } = await supabase.rpc("delete_user_account", {
+    p_user_id: userId,
   });
   if (error) return { error: error.message };
 

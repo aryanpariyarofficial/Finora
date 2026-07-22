@@ -49,6 +49,14 @@ export default async function AppLayout({
         .limit(20),
     ]);
 
+  // Admin switched this account off — end the session rather than render the
+  // app. The auth-level ban stops token refresh; this closes the gap while an
+  // already-issued access token is still valid.
+  if (entitlements.deactivated) {
+    await supabase.auth.signOut();
+    redirect("/login?deactivated=1");
+  }
+
   const unreadCount = (notifications ?? []).filter(
     (n) => n.read_at == null,
   ).length;

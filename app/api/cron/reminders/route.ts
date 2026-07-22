@@ -127,7 +127,7 @@ export async function GET(request: Request) {
     const [{ data: profile }, { data: postings }] = await Promise.all([
       supabase
         .from("profiles")
-        .select("email, full_name")
+        .select("email, full_name, deactivated_at")
         .eq("id", loan.user_id)
         .single(),
       supabase
@@ -135,7 +135,7 @@ export async function GET(request: Request) {
         .select("amount")
         .eq("account_id", loan.liability_account_id),
     ]);
-    if (!profile?.email) continue;
+    if (!profile?.email || profile.deactivated_at) continue;
 
     const outstanding = -(postings ?? []).reduce(
       (acc, p) => acc + Number(p.amount),
@@ -188,10 +188,10 @@ export async function GET(request: Request) {
 
     const { data: profile } = await supabase
       .from("profiles")
-      .select("email, full_name")
+      .select("email, full_name, deactivated_at")
       .eq("id", inv.user_id)
       .single();
-    if (!profile?.email) continue;
+    if (!profile?.email || profile.deactivated_at) continue;
 
     await sendMaturityReminderEmail({
       email: profile.email,
@@ -231,10 +231,10 @@ export async function GET(request: Request) {
 
     const over = spent > Number(b.amount);
     const [{ data: profile }, { data: cat }] = await Promise.all([
-      supabase.from("profiles").select("email, full_name").eq("id", b.user_id).single(),
+      supabase.from("profiles").select("email, full_name, deactivated_at").eq("id", b.user_id).single(),
       supabase.from("accounts").select("name").eq("id", b.category_id).single(),
     ]);
-    if (!profile?.email) continue;
+    if (!profile?.email || profile.deactivated_at) continue;
 
     const catName = cat?.name ?? "category";
     const fresh = await notifyOnce(
@@ -272,6 +272,7 @@ export async function GET(request: Request) {
     .from("profiles")
     .select("id, email, full_name, points")
     .eq("lifetime", false)
+    .is("deactivated_at", null)
     .gt("points", 0)
     .lte("points", 5);
 
@@ -304,6 +305,7 @@ export async function GET(request: Request) {
     .from("profiles")
     .select("id, email, full_name, created_at")
     .eq("lifetime", false)
+    .is("deactivated_at", null)
     .eq("points", 0)
     .lt("created_at", `${weekAgoISO}T23:59:59`);
 

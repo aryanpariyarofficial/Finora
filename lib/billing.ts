@@ -30,6 +30,8 @@ export interface Entitlements {
   role: string;
   isPremium: boolean;
   isSuperAdmin: boolean;
+  /** Admin switched the account off — the app layout signs them out. */
+  deactivated: boolean;
 }
 
 /** How many recent transactions a free user can see. */

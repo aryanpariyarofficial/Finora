@@ -12,6 +12,7 @@ function toEntitlements(row: {
   lifetime: boolean;
   plan: string;
   role: string;
+  deactivated?: boolean;
 }): Entitlements {
   return {
     points: row.points,
@@ -20,6 +21,7 @@ function toEntitlements(row: {
     role: row.role,
     isPremium: row.lifetime || row.points > 0,
     isSuperAdmin: row.role === "super_admin",
+    deactivated: row.deactivated === true,
   };
 }
 
@@ -30,6 +32,7 @@ const FREE: Entitlements = {
   role: "user",
   isPremium: false,
   isSuperAdmin: false,
+  deactivated: false,
 };
 
 export const getEntitlements = cache(async (): Promise<Entitlements> => {
@@ -45,6 +48,7 @@ export const getEntitlements = cache(async (): Promise<Entitlements> => {
       plan: string;
       role: string;
       needs_deduction: boolean;
+      deactivated: boolean;
     }>();
 
   if (fast && !fast.needs_deduction) {

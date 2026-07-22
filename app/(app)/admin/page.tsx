@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { AdjustPoints } from "@/components/admin/adjust-points";
 import { RequestActions } from "@/components/admin/request-actions";
+import { UserActions } from "@/components/admin/user-actions";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { PLANS } from "@/lib/billing";
 import { formatMoney } from "@/lib/finance";
@@ -62,7 +63,9 @@ export default async function AdminPage() {
         .order("created_at", { ascending: true }),
       supabase
         .from("profiles")
-        .select("id, full_name, email, phone, plan, points, lifetime, role, created_at")
+        .select(
+          "id, full_name, email, phone, plan, points, lifetime, role, created_at, deactivated_at",
+        )
         .order("created_at", { ascending: false })
         .limit(500),
       supabase
@@ -80,7 +83,9 @@ export default async function AdminPage() {
     0,
   );
 
-  const allUsers = users ?? [];
+  // Deactivated accounts (test logins, abandoned signups) are kept in the
+  // table but left out of the numbers so they don't skew the analytics.
+  const allUsers = (users ?? []).filter((u) => !u.deactivated_at);
   const totalUsers = allUsers.length;
   const premiumUsers = allUsers.filter(
     (u) => u.lifetime || u.points > 0,
@@ -226,7 +231,9 @@ export default async function AdminPage() {
           <CardTitle>Users</CardTitle>
           <CardDescription>
             Adjust credits manually with +/− values (e.g. 30 to add a month,
-            -5 to correct a mistake).
+            -5 to correct a mistake). Deactivating blocks sign-in and stops all
+            reminder emails; deleting removes the account and all its data
+            permanently.
           </CardDescription>
         </CardHeader>
         <CardContent className="overflow-x-auto">
@@ -237,17 +244,23 @@ export default async function AdminPage() {
                 <TableHead>Plan</TableHead>
                 <TableHead>Credits</TableHead>
                 <TableHead>Adjust</TableHead>
+                <TableHead className="text-right">Account</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {(users ?? []).map((u) => (
-                <TableRow key={u.id}>
+                <TableRow key={u.id} className={u.deactivated_at ? "opacity-60" : ""}>
                   <TableCell>
                     <p className="font-medium">
                       {u.full_name ?? "—"}
                       {u.role === "super_admin" && (
                         <Badge variant="outline" className="ml-2">
                           admin
+                        </Badge>
+                      )}
+                      {u.deactivated_at && (
+                        <Badge variant="secondary" className="ml-2">
+                          deactivated
                         </Badge>
                       )}
                     </p>
@@ -268,6 +281,17 @@ export default async function AdminPage() {
                   </TableCell>
                   <TableCell>
                     {!u.lifetime && <AdjustPoints userId={u.id} />}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {u.role === "super_admin" ? (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    ) : (
+                      <UserActions
+                        userId={u.id}
+                        name={u.full_name ?? u.email ?? "this user"}
+                        deactivated={u.deactivated_at != null}
+                      />
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
