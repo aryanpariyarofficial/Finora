@@ -223,11 +223,11 @@ const faqs = [
     a: "Yes. The free plan lets you track income and expenses forever — no card, no trial timer. Premium unlocks full history, budgets, loans, investments and exports.",
   },
   {
-    q: "How does the points system work?",
-    a: "1 point = 1 day of premium. Monthly = 30 points, 6 months = 180, yearly = 365, and Lifetime never runs out. Pay once via eSewa, Khalti or bank transfer — no auto-billing, no surprise charges.",
+    q: "How does the credit system work?",
+    a: "1 credit = 1 day of premium. Monthly = 30 credits, 6 months = 180, yearly = 365, and Lifetime never runs out. Pay once via eSewa, Khalti or bank transfer — no auto-billing, no surprise charges.",
   },
   {
-    q: "What happens to my data if my points run out?",
+    q: "What happens to my data if my credits run out?",
     a: "Nothing is ever deleted. Your data simply waits in view-only mode and everything unlocks the moment you top up.",
   },
   {
@@ -240,7 +240,7 @@ const faqs = [
   },
   {
     q: "How does the referral program work?",
-    a: "Premium members get a personal invite link. When a friend signs up through it, you BOTH receive 30 points — a full month of premium, free. Your link lives on your Profile page.",
+    a: "Premium members get a personal invite link. When a friend signs up through it, you BOTH receive 30 credits — a full month of premium, free. Your link lives on your Profile page.",
   },
 ];
 
@@ -586,7 +586,7 @@ export default function LandingPage() {
             Simple pricing. <span className={PINK}>No auto-billing.</span>
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-muted-foreground">
-            1 point = 1 day of premium. Pay once via eSewa, Khalti or bank
+            1 credit = 1 day of premium. Pay once via eSewa, Khalti or bank
             transfer — your plan never renews behind your back.
           </p>
           <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -617,7 +617,7 @@ export default function LandingPage() {
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">
                     {plan.points != null
-                      ? `${plan.points} points · ${plan.days} days`
+                      ? `${plan.points} credits · ${plan.days} days`
                       : "Unlimited — pay once, keep forever"}
                   </p>
                   <Button

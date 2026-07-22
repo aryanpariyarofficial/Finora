@@ -30,8 +30,8 @@ export default function TermsPage() {
           The free plan lets you track income and expenses and view your data.
         </li>
         <li>
-          Premium uses a points system: 1 point = 1 day of premium access.
-          Points are added after we verify your payment. Lifetime plans do not
+          Premium uses a credit system: 1 credit = 1 day of premium access.
+          Credits are added after we verify your payment. Lifetime plans do not
           expire.
         </li>
         <li>
@@ -42,7 +42,7 @@ export default function TermsPage() {
 
       <h2 className="pt-4 text-xl font-semibold">3. Payments & refunds</h2>
       <p>
-        Because premium is delivered as points immediately after verification,
+        Because premium is delivered as credits immediately after verification,
         payments are generally non-refundable. If you were charged in error or a
         payment was not activated, contact us and we will make it right.
       </p>
@@ -50,9 +50,9 @@ export default function TermsPage() {
       <h2 className="pt-4 text-xl font-semibold">4. Referrals</h2>
       <p>
         Premium members may share a referral link. When a new user signs up
-        through it, both accounts receive bonus points. Creating fake accounts,
+        through it, both accounts receive bonus credits. Creating fake accounts,
         self-referring, or otherwise abusing the program may result in the
-        removal of bonus points and account suspension.
+        removal of bonus credits and account suspension.
       </p>
 
       <h2 className="pt-4 text-xl font-semibold">5. Not financial advice</h2>

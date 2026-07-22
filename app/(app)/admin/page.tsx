@@ -33,9 +33,9 @@ import { createClient } from "@/lib/supabase/server";
 export const metadata = { title: "Admin" };
 
 const PLAN_LABEL: Record<string, string> = {
-  monthly: "Monthly (30 pts)",
-  half_yearly: "6 Months (180 pts)",
-  yearly: "1 Year (365 pts)",
+  monthly: "Monthly (30 credits)",
+  half_yearly: "6 Months (180 credits)",
+  yearly: "1 Year (365 credits)",
   lifetime: "Lifetime",
 };
 
@@ -115,8 +115,8 @@ export default async function AdminPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Admin</h1>
         <p className="text-sm text-muted-foreground">
-          Verify payments and manage user points. Approving automatically adds
-          the plan&apos;s points (30 / 180 / 365 / lifetime).
+          Verify payments and manage user credits. Approving automatically adds
+          the plan&apos;s credits (30 / 180 / 365 / lifetime).
         </p>
       </div>
 
@@ -225,7 +225,7 @@ export default async function AdminPage() {
         <CardHeader>
           <CardTitle>Users</CardTitle>
           <CardDescription>
-            Adjust points manually with +/− values (e.g. 30 to add a month,
+            Adjust credits manually with +/− values (e.g. 30 to add a month,
             -5 to correct a mistake).
           </CardDescription>
         </CardHeader>
@@ -235,7 +235,7 @@ export default async function AdminPage() {
               <TableRow>
                 <TableHead>User</TableHead>
                 <TableHead>Plan</TableHead>
-                <TableHead>Points</TableHead>
+                <TableHead>Credits</TableHead>
                 <TableHead>Adjust</TableHead>
               </TableRow>
             </TableHeader>

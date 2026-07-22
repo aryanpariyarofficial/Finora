@@ -260,7 +260,12 @@ export async function GET(request: Request) {
     budgetSent++;
   }
 
-  // ---------- Low-points warnings (premium about to expire) ----------
+  // ---------- Low-credit warnings (premium about to expire) ----------
+  // Deduct elapsed days for everyone first, so balances (and therefore the
+  // "expires in N days" copy) are accurate even for users who haven't opened
+  // the app — otherwise stale balances repeat the same reminder daily.
+  await supabase.rpc("sync_all_points");
+
   const { data: lowUsers } = await supabase
     .from("profiles")
     .select("id, email, full_name, points")

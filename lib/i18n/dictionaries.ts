@@ -149,22 +149,22 @@ export const en = {
   upgrade: {
     title: "Upgrade to Premium",
     subtitle:
-      "1 point = 1 day of premium access. Pick a plan, pay via eSewa or Khalti, and send us the screenshot — we activate your points after verification.",
+      "1 credit = 1 day of premium access. Pick a plan, pay via eSewa or Khalti, and send us the screenshot — we activate your credits after verification.",
     currentPlan: "Current plan",
     daysLeft: "days left",
-    lifetime: "Lifetime access — no points needed",
+    lifetime: "Lifetime access — no credits needed",
     free: "Free",
     monthly: "Monthly",
     half_yearly: "6 Months",
     yearly: "1 Year",
     lifetimePlan: "Lifetime",
-    points: "points",
+    points: "credits",
     unlimited: "Unlimited",
     pricePending: "Price announced soon",
     popular: "Most popular",
     formTitle: "Submit payment for verification",
     formSubtitle:
-      "Fill this after paying. The admin verifies and adds your points, usually within 24 hours.",
+      "Fill this after paying. The admin verifies and adds your credits, usually within 24 hours.",
     fullName: "Full name",
     email: "Email",
     phone: "Phone (WhatsApp)",
@@ -205,7 +205,7 @@ export const en = {
       "One saved impulse purchase pays for the whole month. Finora users typically find leaks worth far more than the subscription.",
     successTitle: "🎉 Payment submitted — thank you!",
     successBody:
-      "Your upgrade request has been received. Our team verifies every payment manually and will activate your premium points shortly.",
+      "Your upgrade request has been received. Our team verifies every payment manually and will activate your premium credits shortly.",
     successFast:
       "Want it activated faster? Message us on WhatsApp with your payment — we usually respond within an hour.",
     successWhatsApp: "Message us on WhatsApp",
@@ -608,22 +608,22 @@ export const ne: Dict = {
   upgrade: {
     title: "प्रिमियममा अपग्रेड गर्नुहोस्",
     subtitle:
-      "१ पोइन्ट = १ दिनको प्रिमियम पहुँच। योजना छान्नुहोस्, eSewa वा Khalti बाट भुक्तानी गर्नुहोस्, र स्क्रिनसट पठाउनुहोस् — प्रमाणीकरणपछि तपाईंको पोइन्ट सक्रिय हुन्छ।",
+      "१ क्रेडिट = १ दिनको प्रिमियम पहुँच। योजना छान्नुहोस्, eSewa वा Khalti बाट भुक्तानी गर्नुहोस्, र स्क्रिनसट पठाउनुहोस् — प्रमाणीकरणपछि तपाईंको क्रेडिट सक्रिय हुन्छ।",
     currentPlan: "हालको योजना",
     daysLeft: "दिन बाँकी",
-    lifetime: "आजीवन पहुँच — पोइन्ट चाहिँदैन",
+    lifetime: "आजीवन पहुँच — क्रेडिट चाहिँदैन",
     free: "निःशुल्क",
     monthly: "मासिक",
     half_yearly: "६ महिना",
     yearly: "१ वर्ष",
     lifetimePlan: "आजीवन",
-    points: "पोइन्ट",
+    points: "क्रेडिट",
     unlimited: "असीमित",
     pricePending: "मूल्य चाँडै घोषणा हुनेछ",
     popular: "सबैभन्दा लोकप्रिय",
     formTitle: "भुक्तानी प्रमाणीकरणका लागि पेश गर्नुहोस्",
     formSubtitle:
-      "भुक्तानी गरेपछि यो फारम भर्नुहोस्। एडमिनले प्रमाणित गरेर पोइन्ट थप्नुहुन्छ, सामान्यतया २४ घण्टाभित्र।",
+      "भुक्तानी गरेपछि यो फारम भर्नुहोस्। एडमिनले प्रमाणित गरेर क्रेडिट थप्नुहुन्छ, सामान्यतया २४ घण्टाभित्र।",
     fullName: "पूरा नाम",
     email: "इमेल",
     phone: "फोन (WhatsApp)",
@@ -664,7 +664,7 @@ export const ne: Dict = {
       "एउटा जोगिएको फजुल खर्चले नै पूरै महिनाको शुल्क उठ्छ। Finora प्रयोगकर्ताहरूले शुल्कभन्दा धेरै बढी बचत भेट्टाउँछन्।",
     successTitle: "🎉 भुक्तानी पेश भयो — धन्यवाद!",
     successBody:
-      "तपाईंको upgrade अनुरोध प्राप्त भयो। हाम्रो टोलीले हरेक भुक्तानी हातैले प्रमाणित गरी चाँडै तपाईंको premium points सक्रिय गर्नेछ।",
+      "तपाईंको upgrade अनुरोध प्राप्त भयो। हाम्रो टोलीले हरेक भुक्तानी हातैले प्रमाणित गरी चाँडै तपाईंको premium क्रेडिट सक्रिय गर्नेछ।",
     successFast:
       "छिटो सक्रिय गर्न चाहनुहुन्छ? भुक्तानीसहित हामीलाई WhatsApp मा message गर्नुहोस् — सामान्यतया एक घण्टाभित्र जवाफ दिन्छौं।",
     successWhatsApp: "WhatsApp मा message गर्नुहोस्",

@@ -68,7 +68,7 @@ export default function PrivacyPage() {
 
       <h2 className="pt-4 text-xl font-semibold">5. Data retention & deletion</h2>
       <p>
-        Your data remains as long as your account exists. If your premium points
+        Your data remains as long as your account exists. If your premium credits
         run out, your data is not deleted — it simply becomes view-only until
         you top up. You may request full deletion of your account and data at
         any time by contacting us.

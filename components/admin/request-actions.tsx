@@ -38,7 +38,7 @@ export function RequestActions({
       if (result?.error) toast.error(result.error);
       else
         toast.success(
-          action === "approved" ? "Approved — points added" : "Rejected",
+          action === "approved" ? "Approved — credits added" : "Rejected",
         );
     });
   }

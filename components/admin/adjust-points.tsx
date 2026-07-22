@@ -20,7 +20,7 @@ export function AdjustPoints({ userId }: { userId: string }) {
       const result = await adjustUserPoints(userId, value);
       if (result?.error) toast.error(result.error);
       else {
-        toast.success(`Points ${value > 0 ? "added" : "removed"}`);
+        toast.success(`Credits ${value > 0 ? "added" : "removed"}`);
         setDelta("");
       }
     });
@@ -30,7 +30,7 @@ export function AdjustPoints({ userId }: { userId: string }) {
     <div className="flex items-center gap-1.5">
       <Input
         type="number"
-        placeholder="±points"
+        placeholder="±credits"
         className="h-8 w-24 text-sm"
         value={delta}
         onChange={(e) => setDelta(e.target.value)}

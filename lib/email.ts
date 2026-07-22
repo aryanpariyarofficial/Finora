@@ -118,7 +118,7 @@ export async function sendUpgradeRequestEmails(req: {
         `Thank you, ${esc(req.fullName.split(" ")[0])}!`,
         `<p>Your upgrade request for the <b>${planLabel}</b> plan has been successfully submitted.</p>
          <p>Please wait a few minutes to a few hours — we verify every payment manually,
-         and your premium points will be added as soon as it's confirmed. We will contact you soon.</p>
+         and your premium credits will be added as soon as it's confirmed. We will contact you soon.</p>
          ${whatsappLine}`,
       ),
     }),
@@ -138,8 +138,8 @@ export async function sendUpgradeReviewedEmail(req: {
   if (req.approved) {
     const pointsLine =
       req.plan === "lifetime"
-        ? "You now have <b>lifetime access</b> — no points, no expiry, ever."
-        : `<b>${req.points} points</b> (${req.points} days of premium) have been added to your account.`;
+        ? "You now have <b>lifetime access</b> — no credits, no expiry, ever."
+        : `<b>${req.points} credits</b> (${req.points} days of premium) have been added to your account.`;
     await sendEmail({
       to: req.email,
       subject: "🎉 Your Finora premium is now active!",
@@ -241,10 +241,11 @@ export async function sendLowPointsEmail(opts: {
     subject: `🔔 Your Finora premium expires in ${opts.points} day${opts.points === 1 ? "" : "s"}`,
     html: shell(
       `Hi ${esc(name)}, top up to keep premium`,
-      `<p>You have <b>${opts.points} day${opts.points === 1 ? "" : "s"}</b> of
-       premium left. Top up to keep unlimited history, budgets, loans,
-       investments, reports and exports.</p>
-       <p>Your data is never deleted — but premium features lock when points
+      `<p>You have <b>${opts.points} credit${opts.points === 1 ? "" : "s"}</b>
+       (${opts.points} day${opts.points === 1 ? "" : "s"}) of premium left.
+       Top up to keep unlimited history, budgets, loans, investments,
+       reports and exports.</p>
+       <p>Your data is never deleted — but premium features lock when credits
        run out.</p>
        ${whatsappLine}`,
     ),
