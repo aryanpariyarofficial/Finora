@@ -17,8 +17,12 @@ shadcn/ui + Supabase (Postgres/Auth/Storage).
   mutable balance column, never write to `postings` from the app.
 - **Categories are accounts.** Income/expense categories live in `accounts`
   with `kind = 'income' | 'expense'`. Money accounts are `asset`/`liability`.
-- **Schema changes** go in new files under `supabase/migrations/` (they are
-  run manually in the Supabase SQL editor; there is no migration runner yet).
+- **Schema changes** go in new files under `supabase/migrations/`, applied
+  with the runner: `node scripts/migrate.js` (`--status` to list,
+  `--baseline` to mark existing files as applied without running them).
+  It tracks applied files in `schema_migrations` and needs `DATABASE_URL`
+  in `.env.local` (Supabase → Settings → Database → connection string;
+  use the `aws-0-` pooler host).
 - **RLS everywhere:** every table policy is `user_id = auth.uid()`. New
   tables must ship with RLS enabled + policy in the same migration.
 - Server components fetch via `lib/data.ts`; mutations via server actions in
